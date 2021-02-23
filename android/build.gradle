@@ -1,0 +1,55 @@
+group 'com.artxdev.newpipeextractor_dart'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+allprojects {
+    apply plugin: 'maven'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    version 'v0.20.10'
+    group 'com.github.TeamNewPipe'
+
+    repositories {
+        google()
+        jcenter()
+        maven { url "https://jitpack.io" }
+        maven {
+            url 'http://download.flutter.io'
+        }
+    }
+}
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+
+    dependencies {
+        api "io.flutter:flutter_embedding_debug:1.0.0-d4453f601890ec682bbf8f5659b70f15cce1d67d"
+        implementation 'androidx.annotation:annotation:1.1.0'
+        implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.20.10'
+        implementation 'org.jsoup:jsoup:1.13.1'
+        implementation 'org.mozilla:rhino:1.7.12'
+        implementation 'com.github.spotbugs:spotbugs-annotations:4.0.2'
+        implementation 'org.nibor.autolink:autolink:0.10.0'
+        implementation 'junit:junit:4.13.1'
+        implementation "com.squareup.okhttp3:okhttp:3.12.13"
+        implementation 'com.google.code.gson:gson:2.8.6'
+    }
+}
