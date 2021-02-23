@@ -219,5 +219,19 @@ class YoutubeVideo {
     }
     return audio;
   }
+
+  /// Get the best audio stream for the specified video stream
+  /// taking in consideration the video stream format
+  /// (MP4 supports AAC codec while WEBM supports OGG codec)
+  AudioOnlyStream getAudioStreamWithBestMatchForVideoStream(VideoOnlyStream stream) {
+    if (stream.formatSuffix == "mp4") {
+      return audioWithBestAacQuality;
+    } else if (stream.formatSuffix == "webm") {
+      return audioWithBestOggQuality;
+    } else {
+      return null;
+    }
+  }
+
 }
 
