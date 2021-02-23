@@ -1,3 +1,5 @@
+import 'package:newpipeextractor_dart/models/infoItems/channel.dart';
+
 class YoutubeChannel {
 
   /// Channel Id
@@ -34,5 +36,18 @@ class YoutubeChannel {
     this.feedUrl,
     this.subscriberCount
   });
+
+  /// Transform this object into a ChannelInfoItem which is smaller and
+  /// allows saving or transporting it via Strings
+  ChannelInfoItem toChannelInfoItem() {
+    return ChannelInfoItem(
+      url,
+      name,
+      description,
+      avatarUrl,
+      subscriberCount,
+      0
+    );
+  }
 
 }

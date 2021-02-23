@@ -1,5 +1,6 @@
 import 'package:newpipeextractor_dart/exceptions/streamIsNull.dart';
 import 'package:newpipeextractor_dart/extractors/videos.dart';
+import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/models/streams/audioOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/streams/videoOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/streams/videoStream.dart';
@@ -84,6 +85,21 @@ class YoutubeVideo {
     this.audioOnlyStreams,
     this.videoStreams
   });
+
+  /// Transform this object into a StreamInfoItem which is smaller and
+  /// allows saving or transporting it via Strings
+  StreamInfoItem toStreamInfoItem() {
+    return StreamInfoItem(
+      url,
+      name,
+      uploaderName,
+      uploaderUrl,
+      uploadDate,
+      thumbnailUrl,
+      length,
+      viewCount
+    );
+  }
 
   /// If an instance of this object has no streams (Information only)
   /// then, this function will retrieve those streams and return a new

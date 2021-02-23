@@ -1,4 +1,5 @@
 import 'package:newpipeextractor_dart/extractors/playlist.dart';
+import 'package:newpipeextractor_dart/models/infoItems/playlist.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 
 class YoutubePlaylist {
@@ -44,6 +45,18 @@ class YoutubePlaylist {
     this.thumbnailUrl,
     this.streamCount
   );
+
+  /// Transform this object into a PlaylistInfoItem which is smaller and
+  /// allows saving or transporting it via Strings
+  PlaylistInfoItem toPlaylistInfoItem() {
+    return PlaylistInfoItem(
+      url,
+      name,
+      uploaderName,
+      thumbnailUrl,
+      streamCount
+    );
+  }
 
   /// Retrieve this Playlist list of streams (List of StreamInfoItem)
   Future<void> getStreams() async {
