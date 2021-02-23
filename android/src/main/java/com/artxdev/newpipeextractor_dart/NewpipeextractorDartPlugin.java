@@ -186,6 +186,14 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           } catch (Exception e) { e.printStackTrace(); }
         }
 
+        // Get all Streams from a Channel URL
+        if (method.equals("getChannelUploads")) {
+          String channelUrl = call.argument("channelUrl");
+          try {
+            info[0] = YoutubeChannelExtractorImpl.getChannelUploads(channelUrl);
+          } catch (Exception e) { e.printStackTrace(); }
+        }
+
         // Return the NewPipe_Extractor result back to Flutter, if no work
         // was done this will simply return an empty map
         handler.post(new Runnable() {
