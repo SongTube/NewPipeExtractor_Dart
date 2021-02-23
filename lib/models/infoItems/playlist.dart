@@ -35,7 +35,7 @@ class PlaylistInfoItem {
   }
 
   /// Transform this object toMap
-  Map<dynamic, dynamic> toMap(PlaylistInfoItem infoItem) {
+  Map<dynamic, dynamic> toMap() {
     return {
       'url': url,
       'name': name,

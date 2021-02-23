@@ -55,7 +55,7 @@ class StreamInfoItem {
   }
 
   /// Transform object toMap
-  Map<dynamic, dynamic> toMap(StreamInfoItem infoItem) {
+  Map<dynamic, dynamic> toMap() {
     return {
       'url': url,
       'name': name,

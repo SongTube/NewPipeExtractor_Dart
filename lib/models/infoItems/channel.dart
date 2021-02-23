@@ -39,7 +39,7 @@ class ChannelInfoItem {
   }
 
   /// Transform object toMap
-  Map<dynamic, dynamic> toMap(ChannelInfoItem infoItem) {
+  Map<dynamic, dynamic> toMap() {
     return {
       'url': url,
       'name': name,
