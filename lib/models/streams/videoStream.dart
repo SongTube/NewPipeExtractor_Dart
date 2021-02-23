@@ -1,3 +1,5 @@
+import 'package:newpipeextractor_dart/utils/contentLength.dart';
+
 class VideoStream {
 
   String torrentUrl;
@@ -6,6 +8,7 @@ class VideoStream {
   String formatName;
   String formatSuffix;
   String formatMimeType;
+  int size;
 
   VideoStream(
     this.torrentUrl,
@@ -13,7 +16,11 @@ class VideoStream {
     this.resolution,
     this.formatName,
     this.formatSuffix,
-    this.formatMimeType
+    this.formatMimeType,
   );
+
+  Future<void> get getStreamSize async {
+    size = await ContentLength.getContentLength(url);
+  }
 
 }
