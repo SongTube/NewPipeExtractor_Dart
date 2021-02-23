@@ -11,6 +11,7 @@ import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
 import com.artxdev.newpipeextractor_dart.youtube.StreamExtractorImpl;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeChannelExtractorImpl;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeCommentsExtractorImpl;
+import com.artxdev.newpipeextractor_dart.youtube.YoutubeLinkHandler;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubePlaylistExtractorImpl;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeSearchExtractor;
 
@@ -73,16 +74,22 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           } catch (Exception e) { e.printStackTrace(); }
         }
 
-        // Get Id from any Url
-        if (method.equals("getIdFromUrl")) {
-          final YoutubeChannelLinkHandlerFactory linkHandler =
-                  YoutubeChannelLinkHandlerFactory.getInstance();
-          String url = call.argument("url");
-          String parsedUrl = "";
-          try {
-            parsedUrl = linkHandler.fromUrl(url).getId();
-          } catch (ParsingException e) { e.printStackTrace(); }
-          info[0].put("id", parsedUrl);
+        // Get ID from a Stream URL
+        if (method.equals("getIdFromStreamUrl")) {
+          String streamUrl = call.argument("streamUrl");
+          info[0].put("id", YoutubeLinkHandler.getIdFromStreamUrl(streamUrl));
+        }
+
+        // Get ID from a Playlist URL
+        if (method.equals("getIdFromPlaylistUrl")) {
+          String playlistUrl = call.argument("playlistUrl");
+          info[0].put("id", YoutubeLinkHandler.getIdFromPlaylistUrl(playlistUrl));
+        }
+
+        // Get ID from a Channel URL
+        if (method.equals("getIdFromChannelUrl")) {
+          String channelUrl = call.argument("channelUrl");
+          info[0].put("id", YoutubeLinkHandler.getIdFromChannelUrl(channelUrl));
         }
 
         // Gets video comments
