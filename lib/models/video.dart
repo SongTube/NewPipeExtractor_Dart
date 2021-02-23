@@ -166,9 +166,8 @@ class YoutubeVideo {
     return audio;
   }
 
-  /// Gets the best format audio stream, best is m4a
-  /// (This is because AAC has better support for Tags and Cover)
-  AudioOnlyStream get audioWithBestFormatAndQuality {
+  /// Gets the best AAC format audio stream
+  AudioOnlyStream get audioWithBestAacQuality {
     if (audioOnlyStreams == null)
       throw StreamIsNull("Tried to access a null Audio stream");
     List<AudioOnlyStream> newList = [];
@@ -194,5 +193,31 @@ class YoutubeVideo {
     return audio;
   }
 
+  /// Gets the best OGG format audio stream
+  AudioOnlyStream get audioWithBestOggQuality {
+    if (audioOnlyStreams == null)
+      throw StreamIsNull("Tried to access a null Audio stream");
+    List<AudioOnlyStream> newList = [];
+    audioOnlyStreams.forEach((element) {
+      if (element.formatName == "webm") {
+        newList.add(element);
+      }
+    });
+    if (newList.isEmpty)
+      return audioWithHighestQuality;
+    AudioOnlyStream audio;
+    for (var i = 0; i < newList.length; i++) {
+      if (audio == null) {
+        audio = newList[i];
+      } else {
+        int curBitrate = audio.averageBitrate;
+        int newBitrate = newList[i].averageBitrate;
+        if (curBitrate < newBitrate) {
+          audio = newList[i];
+        }
+      }
+    }
+    return audio;
+  }
 }
 
