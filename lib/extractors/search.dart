@@ -3,6 +3,7 @@ import 'package:newpipeextractor_dart/models/infoItems/channel.dart';
 import 'package:newpipeextractor_dart/models/infoItems/playlist.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
+import 'package:newpipeextractor_dart/utils/streamsParser.dart';
 
 class SearchExtractor {
 
@@ -34,19 +35,8 @@ class SearchExtractor {
       print(info["error"]);
       return [];
     }
-    List<StreamInfoItem> listVideos = [];
-    info['streams'].forEach((_, map) {
-      listVideos.add(StreamInfoItem(
-        map['url'],
-        map['name'],
-        map['uploaderName'],
-        map['uploaderUrl'],
-        map['uploadDate'],
-        map['thumbnailUrl'],
-        int.parse(map['duration']),
-        int.parse(map['viewCount'])
-      ));
-    });
+    List<StreamInfoItem> listVideos = StreamsParser
+      .parseStreamListFromMap(info['streams']);
     List<PlaylistInfoItem> listPlaylists = [];
     info['playlists'].forEach((_, map) {
       listPlaylists.add(PlaylistInfoItem(

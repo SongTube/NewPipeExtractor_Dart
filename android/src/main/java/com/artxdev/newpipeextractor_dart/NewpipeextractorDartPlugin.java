@@ -14,6 +14,7 @@ import com.artxdev.newpipeextractor_dart.youtube.YoutubeCommentsExtractorImpl;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeLinkHandler;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubePlaylistExtractorImpl;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeSearchExtractor;
+import com.artxdev.newpipeextractor_dart.youtube.YoutubeTrendingExtractorImpl;
 
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
@@ -231,6 +232,27 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String channelUrl = call.argument("channelUrl");
           try {
             info[0] = YoutubeChannelExtractorImpl.getChannelUploads(channelUrl);
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
+        }
+
+        // Get related streams from video url
+        if (method.equals("getRelatedStreams")) {
+          String videoUrl = call.argument("videoUrl");
+          try {
+            info[0] = StreamExtractorImpl.getRelatedStreams(videoUrl);
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
+        }
+
+        // Get Trending streams
+        if (method.equals("getTrendingStreams")) {
+          try {
+            info[0] = YoutubeTrendingExtractorImpl.getTrendingPage();
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
