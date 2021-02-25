@@ -30,6 +30,10 @@ class SearchExtractor {
   }
 
   static List<dynamic> _parseSearchResults(info) {
+    if ((info as Map).containsKey("error")) {
+      print(info["error"]);
+      return [];
+    }
     List<StreamInfoItem> listVideos = [];
     info['streams'].forEach((_, map) {
       listVideos.add(StreamInfoItem(
