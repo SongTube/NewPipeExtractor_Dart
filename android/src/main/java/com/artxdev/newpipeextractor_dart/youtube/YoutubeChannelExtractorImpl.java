@@ -15,10 +15,8 @@ import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
 public class YoutubeChannelExtractorImpl {
 
-    private static YoutubeChannelExtractor extractor;
-
     public static Map<String, String> getChannel(String url) throws Exception {
-        NewPipe.init(DownloaderImpl.getInstance());
+        YoutubeChannelExtractor extractor;
         extractor = (YoutubeChannelExtractor) YouTube
                 .getChannelExtractor(url);
         extractor.fetchPage();
@@ -35,7 +33,7 @@ public class YoutubeChannelExtractorImpl {
     }
 
     public static Map<Integer, Map<String, String>> getChannelUploads(String url) throws Exception {
-        NewPipe.init(DownloaderImpl.getInstance());
+        YoutubeChannelExtractor extractor;
         extractor = (YoutubeChannelExtractor) YouTube
                 .getChannelExtractor(url);
         extractor.fetchPage();

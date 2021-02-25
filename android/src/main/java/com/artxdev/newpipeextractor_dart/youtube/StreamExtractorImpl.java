@@ -16,10 +16,8 @@ import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
 public class StreamExtractorImpl {
 
-    private static StreamExtractor extractor;
-
     public static Map<String, String> getVideoInformation(String url) throws Exception {
-        NewPipe.init(DownloaderImpl.getInstance());
+        StreamExtractor extractor;
         extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
         // Extract all Video Information
@@ -44,7 +42,7 @@ public class StreamExtractorImpl {
     }
 
     public static List<Map> getAllVideoStreams(String url) throws Exception {
-        NewPipe.init(DownloaderImpl.getInstance());
+        StreamExtractor extractor;
         extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
         List<Map> listMaps = new ArrayList<>();
@@ -101,7 +99,7 @@ public class StreamExtractorImpl {
     }
 
     public static List<Map> getVideoInfoAndStreams(String url) throws Exception {
-        NewPipe.init(DownloaderImpl.getInstance());
+        StreamExtractor extractor;
         extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
         List<Map> listMaps = new ArrayList<>();
@@ -178,7 +176,7 @@ public class StreamExtractorImpl {
     }
 
     public static Map<Integer, Map<String, String>> getVideoOnlyStreams(String url) throws Exception {
-        NewPipe.init(DownloaderImpl.getInstance());
+        StreamExtractor extractor;
         extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
         // Extract all VideoOnlyStreams Information
@@ -199,7 +197,7 @@ public class StreamExtractorImpl {
     }
 
     public static Map<Integer, Map<String, String>> getAudioOnlyStreams(String url) throws Exception {
-        NewPipe.init(DownloaderImpl.getInstance());
+        StreamExtractor extractor;
         extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
         // Extract all AudioOnlyStreams Information
@@ -220,7 +218,7 @@ public class StreamExtractorImpl {
     }
 
     public static Map<Integer, Map<String, String>> getVideoStreams(String url) throws Exception {
-        NewPipe.init(DownloaderImpl.getInstance());
+        StreamExtractor extractor;
         extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
         // Extract all VideoStreams Information (Streams which contains Audio)

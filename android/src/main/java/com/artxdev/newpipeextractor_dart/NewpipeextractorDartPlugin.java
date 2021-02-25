@@ -41,6 +41,7 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
+
   private final YoutubeSearchExtractor searchExtractor
           = new YoutubeSearchExtractor();
   private final YoutubePlaylistExtractorImpl playlistExtractor
@@ -153,7 +154,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String query = call.argument("query");
           try {
             info[0] = searchExtractor.searchYoutube(query);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get the next page of a previously made searchYoutube query

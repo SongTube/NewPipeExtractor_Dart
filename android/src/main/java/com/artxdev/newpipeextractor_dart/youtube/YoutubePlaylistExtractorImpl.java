@@ -19,7 +19,6 @@ public class YoutubePlaylistExtractorImpl {
     private ListExtractor.InfoItemsPage<StreamInfoItem> itemsPage;
 
     public Map<String, String> getPlaylistDetails(String url) throws Exception {
-        NewPipe.init(DownloaderImpl.getInstance());
         extractor = (YoutubePlaylistExtractor) YouTube
                 .getPlaylistExtractor(url);
         extractor.fetchPage();
