@@ -1,10 +1,8 @@
 import 'package:http/http.dart';
 
-import 'youtube_explode_exception.dart';
-
 /// Exception thrown when a fatal failure occurs.
-class TransientFailureException implements YoutubeExplodeException {
-  @override
+class TransientFailureException implements Exception {
+  
   final String message;
 
   /// Initializes an instance of [TransientFailureException]

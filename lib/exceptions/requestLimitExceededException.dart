@@ -1,11 +1,9 @@
 import 'package:http/http.dart';
 
-import 'youtube_explode_exception.dart';
-
 /// Exception thrown when a fatal failure occurs.
-class RequestLimitExceededException implements YoutubeExplodeException {
+class RequestLimitExceededException implements Exception {
+  
   /// Description message
-  @override
   final String message;
 
   /// Initializes an instance of [RequestLimitExceededException]

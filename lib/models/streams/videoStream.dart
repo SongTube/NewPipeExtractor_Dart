@@ -1,4 +1,4 @@
-import 'package:newpipeextractor_dart/utils/contentLength.dart';
+import 'package:newpipeextractor_dart/utils/httpClient.dart';
 
 class VideoStream {
 
@@ -20,7 +20,7 @@ class VideoStream {
   );
 
   Future<void> get getStreamSize async {
-    size = await ContentLength.getContentLength(url);
+    size = await ExtractorHttpClient.getContentLength(url);
   }
 
   double get totalKiloBytes => size / 1024;
