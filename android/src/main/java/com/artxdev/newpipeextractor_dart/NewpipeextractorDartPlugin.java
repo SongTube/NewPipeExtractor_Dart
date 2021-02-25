@@ -72,7 +72,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String channelUrl = call.argument("channelUrl");
           try {
             info[0] = YoutubeChannelExtractorImpl.getChannel(channelUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get ID from a Stream URL
@@ -98,7 +101,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String videoUrl = call.argument("videoUrl");
           try {
             info[0] = YoutubeCommentsExtractorImpl.getCommnets(videoUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Gets all Video Information including Audio, Video and Muxed Streams
@@ -106,7 +112,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String videoUrl = call.argument("videoUrl");
           try {
             listMaps[0] = StreamExtractorImpl.getVideoInfoAndStreams(videoUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get all Video information without Streams
@@ -114,7 +123,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String videoUrl = call.argument("videoUrl");
           try {
             info[0] = StreamExtractorImpl.getVideoInformation(videoUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get all Video Streams
@@ -122,7 +134,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String videoUrl = call.argument("videoUrl");
           try {
             listMaps[0] = StreamExtractorImpl.getAllVideoStreams(videoUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get Video Only Streams
@@ -130,7 +145,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String videoUrl = call.argument("videoUrl");
           try {
             info[0] = StreamExtractorImpl.getVideoOnlyStreams(videoUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get Audio Only Streams
@@ -138,7 +156,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String videoUrl = call.argument("videoUrl");
           try {
             info[0] = StreamExtractorImpl.getAudioOnlyStreams(videoUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get Video Streams (Muxed)
@@ -146,7 +167,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String videoUrl = call.argument("videoUrl");
           try {
             info[0] = StreamExtractorImpl.getVideoStreams(videoUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Search Youtube for Videos/Channels/Playlists
@@ -164,7 +188,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getNextPage")) {
           try {
             info[0] = searchExtractor.getNextPage();
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get the Playlist Details
@@ -172,7 +199,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String playlistUrl = call.argument("playlistUrl");
           try {
             info[0] = playlistExtractor.getPlaylistDetails(playlistUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get streams from a Playlist
@@ -180,14 +210,20 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String playlistUrl = call.argument("playlistUrl");
           try {
             info[0] = playlistExtractor.getPlaylistStreams(playlistUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get next page from current Playlist
         if (method.equals("getPlaylistNextPage")) {
           try {
             info[0] = playlistExtractor.getNextPage();
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Get all Streams from a Channel URL
@@ -195,7 +231,10 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           String channelUrl = call.argument("channelUrl");
           try {
             info[0] = YoutubeChannelExtractorImpl.getChannelUploads(channelUrl);
-          } catch (Exception e) { e.printStackTrace(); }
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
         }
 
         // Return the NewPipe_Extractor result back to Flutter, if no work
