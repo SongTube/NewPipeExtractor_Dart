@@ -17,31 +17,30 @@ apply plugin: 'com.android.library'
 allprojects {
     apply plugin: 'maven'
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-
-    version 'v0.20.10'
-    group 'com.github.TeamNewPipe'
-
     repositories {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
-        maven {
-            url 'http://download.flutter.io'
-        }
     }
 }
 
 android {
+
     compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 22
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        // Sets Java compatibility to Java 8
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
     dependencies {
-        api "io.flutter:flutter_embedding_debug:1.0.0-d4453f601890ec682bbf8f5659b70f15cce1d67d"
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
         implementation 'androidx.annotation:annotation:1.1.0'
         implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.20.10'
         implementation 'org.jsoup:jsoup:1.13.1'
