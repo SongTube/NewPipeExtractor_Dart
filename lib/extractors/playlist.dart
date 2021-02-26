@@ -35,20 +35,7 @@ class PlaylistExtractor {
     var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getPlaylistStreams", { "playlistUrl": playlistUrl }
     );
-    List<StreamInfoItem> listStreams = [];
-    info.forEach((_, map) {
-      listStreams.add(StreamInfoItem(
-        map['url'],
-        map['name'],
-        map['uploaderName'],
-        map['uploaderUrl'],
-        map['uploadDate'],
-        map['thumbnailUrl'],
-        int.parse(map['duration']),
-        int.parse(map['viewCount'])
-      ));
-    });
-    return listStreams;
+    return StreamsParser.parseStreamListFromMap(info);
   }
 
   /// Gets the next page of the current Playlist
@@ -56,20 +43,7 @@ class PlaylistExtractor {
     var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getPlaylistNextPage",
     );
-    List<StreamInfoItem> listStreams = [];
-    info.forEach((_, map) {
-      listStreams.add(StreamInfoItem(
-        map['url'],
-        map['name'],
-        map['uploaderName'],
-        map['uploaderUrl'],
-        map['uploadDate'],
-        map['thumbnailUrl'],
-        int.parse(map['duration']),
-        int.parse(map['viewCount'])
-      ));
-    });
-    return listStreams;
+    return StreamsParser.parseStreamListFromMap(info);
   }
 
 }
