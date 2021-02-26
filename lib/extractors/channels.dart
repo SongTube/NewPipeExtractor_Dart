@@ -2,7 +2,11 @@ import 'package:newpipeextractor_dart/exceptions/badUrlException.dart';
 import 'package:newpipeextractor_dart/models/channel.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
+import 'package:newpipeextractor_dart/utils/httpClient.dart';
+import 'package:newpipeextractor_dart/utils/streamsParser.dart';
 import 'package:newpipeextractor_dart/utils/stringChecker.dart';
+import 'package:html/parser.dart' as parser;
+import 'package:http/http.dart' as http;
 
 class ChannelExtractor {
 
@@ -33,20 +37,18 @@ class ChannelExtractor {
     var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
       'getChannelUploads', { "channelUrl": url }
     );
-    List<StreamInfoItem> streams = [];
-    info.forEach((_, map) {
-      streams.add(StreamInfoItem(
-        map['url'],
-        map['name'],
-        map['uploaderName'],
-        map['uploaderUrl'],
-        map['uploadDate'],
-        map['thumbnailUrl'],
-        int.parse(map['duration']),
-        int.parse(map['viewCount'])
-      ));
-    });
-    return streams;
+    return StreamsParser.parseStreamListFromMap(info);
+  }
+ 
+  /// Retrieve high quality Channel Avatar URL
+  static Future<String> getAvatarUrl(String channelId) async {
+    var url = 'https://www.youtube.com/channel/$channelId?hl=en';
+    var client = http.Client();
+    var response = await client.get(url, headers: ExtractorHttpClient.defaultHeaders);
+    var raw = response.body;
+    return parser.parse(raw)
+      .querySelector('meta[property="og:image"]')
+      ?.attributes['content'];
   }
 
 }
