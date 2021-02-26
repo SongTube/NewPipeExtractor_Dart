@@ -8,7 +8,7 @@ import 'package:newpipeextractor_dart/exceptions/transistentFailureException.dar
 
 class ExtractorHttpClient {
 
-  static const Map<String, String> _defaultHeaders = {
+  static const Map<String, String> defaultHeaders = {
     'user-agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
     'accept-language': 'en-US,en;q=1.0',
@@ -23,11 +23,11 @@ class ExtractorHttpClient {
   };
 
   static Future<int> getContentLength(String url) async {
-    var response = await http.head(Uri.parse(url), headers: _defaultHeaders);
+    var response = await http.head(Uri.parse(url), headers: defaultHeaders);
     return int.tryParse(response.headers['content-length'] ?? '');
   }
 
-  Stream<List<int>> getStream(dynamic stream,
+  static Stream<List<int>> getStream(dynamic stream,
       {Map<String, String> headers,
       bool validate = true,
       int start = 0,
@@ -39,9 +39,9 @@ class ExtractorHttpClient {
       try {
         final request = http.Request('get', url);
         request.headers['range'] = 'bytes=$i-${i + 9898989 - 1}';
-        _defaultHeaders.forEach((key, value) {
+        defaultHeaders.forEach((key, value) {
           if (request.headers[key] == null) {
-            request.headers[key] = _defaultHeaders[key];
+            request.headers[key] = defaultHeaders[key];
           }
         });
         final response = await client.send(request);
@@ -71,7 +71,7 @@ class ExtractorHttpClient {
     client.close();
   }
 
-  void _validateResponse(http.BaseResponse response, int statusCode) {
+  static void _validateResponse(http.BaseResponse response, int statusCode) {
     var request = response.request;
     if (request.url.host.endsWith('.google.com') &&
         request.url.path.startsWith('/sorry/')) {
