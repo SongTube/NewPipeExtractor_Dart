@@ -8,11 +8,11 @@ class StreamsParser {
     info.forEach((_, map) {
       streams.add(StreamInfoItem(
         map['url'],
+        map['id'],
         map['name'],
         map['uploaderName'],
         map['uploaderUrl'],
         map['uploadDate'],
-        map['thumbnailUrl'],
         int.parse(map['duration']),
         int.parse(map['viewCount'])
       ));
