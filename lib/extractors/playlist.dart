@@ -1,5 +1,4 @@
 import 'package:newpipeextractor_dart/exceptions/badUrlException.dart';
-import 'package:newpipeextractor_dart/models/infoItems/playlist.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/models/playlist.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
