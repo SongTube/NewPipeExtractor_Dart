@@ -91,11 +91,11 @@ class YoutubeVideo {
   StreamInfoItem toStreamInfoItem() {
     return StreamInfoItem(
       url,
+      id,
       name,
       uploaderName,
       uploaderUrl,
       uploadDate,
-      thumbnailUrl,
       length,
       viewCount
     );

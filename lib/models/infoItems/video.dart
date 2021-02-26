@@ -4,11 +4,15 @@ import 'package:newpipeextractor_dart/extractors/channels.dart';
 import 'package:newpipeextractor_dart/extractors/videos.dart';
 import 'package:newpipeextractor_dart/models/channel.dart';
 import 'package:newpipeextractor_dart/models/video.dart';
+import 'package:newpipeextractor_dart/utils/thumbnails.dart';
 
 class StreamInfoItem {
 
   /// Video URL
   final String url;
+
+  /// Video ID
+  final String id;
 
   /// Video name
   final String name;
@@ -22,9 +26,6 @@ class StreamInfoItem {
   /// Video date
   final String uploadDate;
 
-  /// Video thumbnail url
-  final String thumbnailUrl;
-
   /// Video duration in seconds (s)
   final int duration;
 
@@ -33,14 +34,19 @@ class StreamInfoItem {
 
   StreamInfoItem(
     this.url,
+    this.id,
     this.name,
     this.uploaderName,
     this.uploaderUrl,
     this.uploadDate,
-    this.thumbnailUrl,
     this.duration,
     this.viewCount
-  );
+  ) {
+    thumbnails = StreamThumbnail(id);
+  }
+
+  /// Stream Thumbnails
+  StreamThumbnail thumbnails;
 
   /// Gets full YoutubeVideo containing more Information and
   /// all necessary streams for Streaming and Downloading
@@ -58,11 +64,11 @@ class StreamInfoItem {
   Map<dynamic, dynamic> toMap() {
     return {
       'url': url,
+      'id': id,
       'name': name,
       'uploaderName': uploaderName,
       'uploaderUrl': uploaderUrl,
       'uploadDate': uploadDate,
-      'thumbnailUrl': thumbnailUrl,
       'duration': duration.toString(),
       'viewCount': viewCount.toString()
     };
@@ -72,11 +78,11 @@ class StreamInfoItem {
   static StreamInfoItem fromMap(Map<dynamic, dynamic> map) {
     return StreamInfoItem(
       map['url'],
+      map['id'],
       map['name'],
       map['uploaderName'],
       map['uploaderUrl'],
       map['uploadDate'],
-      map['thumbnailUrl'],
       int.parse(map['duration']),
       int.parse(map['viewCount'])
     );
@@ -101,11 +107,11 @@ class StreamInfoItem {
       .map((e) => 
         {
           'url': e.url,
+          'id': e.id,
           'name': e.name,
           'uploaderName': e.uploaderName,
           'uploaderUrl': e.uploaderUrl,
           'uploadDate': e.uploadDate,
-          'thumbnailUrl': e.thumbnailUrl,
           'duration': e.duration.toString(),
           'viewCount': e.viewCount.toString()
         }

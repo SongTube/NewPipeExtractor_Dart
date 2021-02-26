@@ -1,9 +1,11 @@
 import 'package:newpipeextractor_dart/exceptions/badUrlException.dart';
+import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/models/streams/audioOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/video.dart';
 import 'package:newpipeextractor_dart/models/streams/videoOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/streams/videoStream.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
+import 'package:newpipeextractor_dart/utils/streamsParser.dart';
 import 'package:newpipeextractor_dart/utils/stringChecker.dart';
 
 class VideoExtractor {
