@@ -183,4 +183,14 @@ class VideoExtractor {
     return videoStreams;
   }
 
+  /// Retrieve related videos by URL
+  static Future<List<StreamInfoItem>> getRelatedStreams(String videoUrl) async {
+    if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
+      throw BadUrlException("Url is null or contains white space");
+    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+      "getRelatedStreams", { "videoUrl": videoUrl }
+    );
+    return StreamsParser.parseStreamListFromMap(info);
+  }
+
 }
