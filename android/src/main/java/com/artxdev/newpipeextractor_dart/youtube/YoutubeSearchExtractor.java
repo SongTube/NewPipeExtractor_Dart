@@ -84,6 +84,7 @@ public class YoutubeSearchExtractor {
                 itemMap.put("duration", String.valueOf(item.getDuration()));
                 itemMap.put("viewCount", String.valueOf(item.getViewCount()));
                 itemMap.put("url", item.getUrl());
+                itemMap.put("id", YoutubeLinkHandler.getIdFromStreamUrl(item.getUrl()));
                 streamResultsMap.put(i, itemMap);
             }
         }
@@ -98,6 +99,7 @@ public class YoutubeSearchExtractor {
                 itemMap.put("name", item.getName());
                 itemMap.put("thumbnailUrl", item.getThumbnailUrl());
                 itemMap.put("url", item.getUrl());
+                itemMap.put("id", YoutubeLinkHandler.getIdFromChannelUrl(item.getUrl()));
                 itemMap.put("description", item.getDescription());
                 itemMap.put("streamCount", String.valueOf(item.getStreamCount()));
                 itemMap.put("subscriberCount", String.valueOf(item.getSubscriberCount()));
@@ -115,6 +117,7 @@ public class YoutubeSearchExtractor {
                 itemMap.put("name", item.getName());
                 itemMap.put("uploaderName", item.getUploaderName());
                 itemMap.put("url", item.getUrl());
+                itemMap.put("id", YoutubeLinkHandler.getIdFromPlaylistUrl(item.getUrl()));
                 itemMap.put("thumbnailUrl", item.getThumbnailUrl());
                 itemMap.put("streamCount", String.valueOf(item.getStreamCount()));
                 playlistResultsMap.put(i, itemMap);

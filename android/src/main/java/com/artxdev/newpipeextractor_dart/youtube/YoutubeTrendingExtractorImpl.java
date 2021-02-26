@@ -32,6 +32,7 @@ public class YoutubeTrendingExtractorImpl {
             itemMap.put("duration", String.valueOf(item.getDuration()));
             itemMap.put("viewCount", String.valueOf(item.getViewCount()));
             itemMap.put("url", item.getUrl());
+            itemMap.put("id", YoutubeLinkHandler.getIdFromStreamUrl(item.getUrl()));
             itemsMap.put(i, itemMap);
         }
         return itemsMap;

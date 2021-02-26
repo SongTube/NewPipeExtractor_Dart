@@ -37,6 +37,11 @@ public class YoutubePlaylistExtractorImpl {
     }
 
     public Map<Integer, Map<String, String>> getPlaylistStreams(String url) throws Exception {
+        if (extractor == null) {
+            extractor = (YoutubePlaylistExtractor) YouTube
+                    .getPlaylistExtractor(url);
+            extractor.fetchPage();
+        }
         List<StreamInfoItem> items = extractor.getInitialPage().getItems();
         return _fetchResultsFromItems(items);
     }
@@ -64,6 +69,7 @@ public class YoutubePlaylistExtractorImpl {
             itemMap.put("duration", String.valueOf(item.getDuration()));
             itemMap.put("viewCount", String.valueOf(item.getViewCount()));
             itemMap.put("url", item.getUrl());
+            itemMap.put("id", YoutubeLinkHandler.getIdFromStreamUrl(item.getUrl()));
             playlistResults.put(i, itemMap);
         }
         return playlistResults;
