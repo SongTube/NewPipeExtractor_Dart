@@ -60,6 +60,7 @@ public class StreamExtractorImpl {
             audioStreamMap.put("formatName", audioStream.getFormat().name);
             audioStreamMap.put("formatSuffix", audioStream.getFormat().suffix);
             audioStreamMap.put("formatMimeType", audioStream.getFormat().mimeType);
+            audioStreamMap.put("size", String.valueOf(DownloaderImpl.getInstance().getContentLength(audioStream.url)));
             audioOnlyStreamsMap.put(i, audioStreamMap);
         }
         listMaps.add(audioOnlyStreamsMap);
@@ -76,6 +77,7 @@ public class StreamExtractorImpl {
             videoOnlyStreamMap.put("formatName", videoOnlyStream.getFormat().name);
             videoOnlyStreamMap.put("formatSuffix", videoOnlyStream.getFormat().suffix);
             videoOnlyStreamMap.put("formatMimeType", videoOnlyStream.getFormat().mimeType);
+            videoOnlyStreamMap.put("size", String.valueOf(DownloaderImpl.getInstance().getContentLength(videoOnlyStream.url)));
             videoOnlyStreamsMap.put(i, videoOnlyStreamMap);
         }
         listMaps.add(videoOnlyStreamsMap);
@@ -92,6 +94,7 @@ public class StreamExtractorImpl {
             videoStreamMap.put("formatName", videoStream.getFormat().name);
             videoStreamMap.put("formatSuffix", videoStream.getFormat().suffix);
             videoStreamMap.put("formatMimeType", videoStream.getFormat().mimeType);
+            videoStreamMap.put("size", String.valueOf(DownloaderImpl.getInstance().getContentLength(videoStream.url)));
             videoStreamsMap.put(i, videoStreamMap);
         }
         listMaps.add(videoStreamsMap);
@@ -137,6 +140,7 @@ public class StreamExtractorImpl {
             audioStreamMap.put("formatName", audioStream.getFormat().name);
             audioStreamMap.put("formatSuffix", audioStream.getFormat().suffix);
             audioStreamMap.put("formatMimeType", audioStream.getFormat().mimeType);
+            audioStreamMap.put("size", String.valueOf(DownloaderImpl.getInstance().getContentLength(audioStream.url)));
             audioOnlyStreamsMap.put(i, audioStreamMap);
         }
         listMaps.add(audioOnlyStreamsMap);
@@ -153,6 +157,7 @@ public class StreamExtractorImpl {
             videoOnlyStreamMap.put("formatName", videoOnlyStream.getFormat().name);
             videoOnlyStreamMap.put("formatSuffix", videoOnlyStream.getFormat().suffix);
             videoOnlyStreamMap.put("formatMimeType", videoOnlyStream.getFormat().mimeType);
+            videoOnlyStreamMap.put("size", String.valueOf(DownloaderImpl.getInstance().getContentLength(videoOnlyStream.url)));
             videoOnlyStreamsMap.put(i, videoOnlyStreamMap);
         }
         listMaps.add(videoOnlyStreamsMap);
@@ -169,6 +174,7 @@ public class StreamExtractorImpl {
             videoStreamMap.put("formatName", videoStream.getFormat().name);
             videoStreamMap.put("formatSuffix", videoStream.getFormat().suffix);
             videoStreamMap.put("formatMimeType", videoStream.getFormat().mimeType);
+            videoStreamMap.put("size", String.valueOf(DownloaderImpl.getInstance().getContentLength(videoStream.url)));
             videoStreamsMap.put(i, videoStreamMap);
         }
         listMaps.add(videoStreamsMap);
@@ -192,6 +198,7 @@ public class StreamExtractorImpl {
             videoOnlyStreamMap.put("formatName", videoOnlyStream.getFormat().name);
             videoOnlyStreamMap.put("formatSuffix", videoOnlyStream.getFormat().suffix);
             videoOnlyStreamMap.put("formatMimeType", videoOnlyStream.getFormat().mimeType);
+            videoOnlyStreamMap.put("size", String.valueOf(DownloaderImpl.getInstance().getContentLength(videoOnlyStream.url)));
             videoOnlyStreamsMap.put(i, videoOnlyStreamMap);
         }
         return videoOnlyStreamsMap;
@@ -213,6 +220,7 @@ public class StreamExtractorImpl {
             audioStreamMap.put("formatName", audioStream.getFormat().name);
             audioStreamMap.put("formatSuffix", audioStream.getFormat().suffix);
             audioStreamMap.put("formatMimeType", audioStream.getFormat().mimeType);
+            audioStreamMap.put("size", String.valueOf(DownloaderImpl.getInstance().getContentLength(audioStream.url)));
             audioOnlyStreamsMap.put(i, audioStreamMap);
         }
         return audioOnlyStreamsMap;
@@ -234,6 +242,7 @@ public class StreamExtractorImpl {
             videoStreamMap.put("formatName", videoStream.getFormat().name);
             videoStreamMap.put("formatSuffix", videoStream.getFormat().suffix);
             videoStreamMap.put("formatMimeType", videoStream.getFormat().mimeType);
+            videoStreamMap.put("size", String.valueOf(DownloaderImpl.getInstance().getContentLength(videoStream.url)));
             videoStreamsMap.put(i, videoStreamMap);
         }
         return videoStreamsMap;

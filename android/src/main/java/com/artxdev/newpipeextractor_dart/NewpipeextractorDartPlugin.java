@@ -1,9 +1,14 @@
 package com.artxdev.newpipeextractor_dart;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
+import android.webkit.CookieManager;
 
 import androidx.annotation.NonNull;
 
@@ -22,6 +27,8 @@ import org.schabi.newpipe.extractor.linkhandler.LinkHandler;
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeChannelLinkHandlerFactory;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +43,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 /** NewpipeextractorDartPlugin */
+@SuppressWarnings("unchecked")
+@SuppressLint("ApplySharedPref")
 public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHandler {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
@@ -43,14 +52,25 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
 
+  private Context context;
+
   private final YoutubeSearchExtractor searchExtractor
           = new YoutubeSearchExtractor();
   private final YoutubePlaylistExtractorImpl playlistExtractor
           = new YoutubePlaylistExtractorImpl();
 
+  private final String PREFS_COOKIES_KEY = "prefs_cookies_key";
+
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+    context = flutterPluginBinding.getApplicationContext();
     NewPipe.init(DownloaderImpl.getInstance());
+    final SharedPreferences preferences = PreferenceManager
+            .getDefaultSharedPreferences(context);
+    final String cookie = preferences.getString(PREFS_COOKIES_KEY, "");
+    if (cookie != "") {
+      DownloaderImpl.getInstance().setCookie(cookie);
+    }
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "newpipeextractor_dart");
     channel.setMethodCallHandler(this);
   }
@@ -253,6 +273,43 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getTrendingStreams")) {
           try {
             info[0] = YoutubeTrendingExtractorImpl.getTrendingPage();
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
+        }
+
+        // Set cookie on our DownloaderImpl
+        if (method.equals("setCookie")) {
+          String cookie = call.argument("cookie");
+          if (cookie != null) {
+            DownloaderImpl.getInstance().setCookie(cookie);
+            final SharedPreferences preferences = PreferenceManager
+                    .getDefaultSharedPreferences(context);
+            preferences.edit().putString(PREFS_COOKIES_KEY, cookie).commit();
+            info[0].put("status", "success");
+          } else {
+            info[0].put("status", "failed");
+          }
+        }
+
+        // Get cookie string from url
+        if (method.equals("getCookieByUrl")) {
+          String url = call.argument("url");
+          try {
+            final String cookie = CookieManager.getInstance().getCookie(url);
+            info[0].put("cookie", cookie);
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
+        }
+
+        // Decode Cookie
+        if (method.equals("decodeCookie")) {
+          String cookie = call.argument("cookie");
+          try {
+            info[0].put("cookie", URLDecoder.decode(cookie, "UTF-8"));
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());

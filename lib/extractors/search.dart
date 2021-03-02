@@ -3,6 +3,7 @@ import 'package:newpipeextractor_dart/models/infoItems/channel.dart';
 import 'package:newpipeextractor_dart/models/infoItems/playlist.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
+import 'package:newpipeextractor_dart/utils/reCaptcha.dart';
 import 'package:newpipeextractor_dart/utils/streamsParser.dart';
 
 class SearchExtractor {
@@ -12,9 +13,12 @@ class SearchExtractor {
   /// PlaylistInfoItem and ChannelInfoItem found, you can then query
   /// for more results running that object [getNextPage()] function
   static Future<YoutubeSearch> searchYoutube(String query) async {
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "searchYoutube", { "query": query }
     );
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     var parsedList = _parseSearchResults(info);
     return YoutubeSearch(
       query: query,
@@ -26,7 +30,10 @@ class SearchExtractor {
 
   /// Gets the next page of the current YoutubeSearch Query
   static Future<List<dynamic>> getNextPage() async {
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod("getNextPage");
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod("getNextPage");
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     return _parseSearchResults(info);
   }
 

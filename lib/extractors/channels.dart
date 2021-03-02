@@ -3,6 +3,7 @@ import 'package:newpipeextractor_dart/models/channel.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
 import 'package:newpipeextractor_dart/utils/httpClient.dart';
+import 'package:newpipeextractor_dart/utils/reCaptcha.dart';
 import 'package:newpipeextractor_dart/utils/streamsParser.dart';
 import 'package:newpipeextractor_dart/utils/stringChecker.dart';
 import 'package:html/parser.dart' as parser;
@@ -15,9 +16,12 @@ class ChannelExtractor {
   static Future<YoutubeChannel> channelInfo(String url) async {
     if (url == null || StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
-    var channel = await NewPipeExtractorDart.extractorChannel.invokeMethod('getChannel', {
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod('getChannel', {
       "channelUrl": url
     });
+    var channel = await task();
+    // Check if we got reCaptcha needed response
+    channel = await ReCaptchaPage.checkInfo(channel, task);
     return YoutubeChannel(
       id: channel['id'],
       name: channel['name'],
@@ -34,9 +38,12 @@ class ChannelExtractor {
   static Future<List<StreamInfoItem>> getChannelUploads(String url) async {
     if (url == null || StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       'getChannelUploads', { "channelUrl": url }
     );
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     return StreamsParser.parseStreamListFromMap(info);
   }
  

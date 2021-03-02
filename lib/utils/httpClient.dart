@@ -10,16 +10,7 @@ class ExtractorHttpClient {
 
   static const Map<String, String> defaultHeaders = {
     'user-agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
-    'accept-language': 'en-US,en;q=1.0',
-    'x-youtube-client-name': '1',
-    'x-youtube-client-version': '2.20200609.04.02',
-    'x-spf-previous': 'https://www.youtube.com/',
-    'x-spf-referer': 'https://www.youtube.com/',
-    'x-youtube-device':
-        'cbr=Chrome&cbrver=81.0.4044.138&ceng=WebKit&cengver=537.36'
-            '&cos=Windows&cosver=10.0',
-    'x-youtube-page-label': 'youtube.ytfe.desktop_20200617_1_RC1'
+        'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0'
   };
 
   static Future<int> getContentLength(String url) async {
@@ -32,12 +23,12 @@ class ExtractorHttpClient {
       bool validate = true,
       int start = 0,
       int errorCount = 0}) async* {
-    var url = stream.url;
+    String url = stream.url;
     var bytesCount = start;
     var client = http.Client();
     for (var i = start; i < stream.size; i += 9898989) {
       try {
-        final request = http.Request('get', url);
+        final request = http.Request('get', Uri.parse(url));
         request.headers['range'] = 'bytes=$i-${i + 9898989 - 1}';
         defaultHeaders.forEach((key, value) {
           if (request.headers[key] == null) {

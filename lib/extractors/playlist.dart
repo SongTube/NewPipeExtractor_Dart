@@ -2,6 +2,7 @@ import 'package:newpipeextractor_dart/exceptions/badUrlException.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/models/playlist.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
+import 'package:newpipeextractor_dart/utils/reCaptcha.dart';
 import 'package:newpipeextractor_dart/utils/streamsParser.dart';
 import 'package:newpipeextractor_dart/utils/stringChecker.dart';
 
@@ -11,9 +12,12 @@ class PlaylistExtractor {
   static Future<YoutubePlaylist> getPlaylistDetails(String playlistUrl) async {
     if (playlistUrl == null || StringChecker.hasWhiteSpace(playlistUrl))
       throw BadUrlException("Url is null or contains white space");
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getPlaylistDetails", { "playlistUrl": playlistUrl }
     );
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     return YoutubePlaylist(
       info['id'],
       info['name'],
@@ -32,17 +36,23 @@ class PlaylistExtractor {
   static Future<List<StreamInfoItem>> getPlaylistStreams(String playlistUrl) async {
     if (playlistUrl == null || StringChecker.hasWhiteSpace(playlistUrl))
       throw BadUrlException("Url is null or contains white space");
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getPlaylistStreams", { "playlistUrl": playlistUrl }
     );
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     return StreamsParser.parseStreamListFromMap(info);
   }
 
   /// Gets the next page of the current Playlist
   static Future<List<StreamInfoItem>> getNextPage() async {
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getPlaylistNextPage",
     );
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     return StreamsParser.parseStreamListFromMap(info);
   }
 

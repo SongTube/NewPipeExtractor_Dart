@@ -1,6 +1,7 @@
 import 'package:newpipeextractor_dart/exceptions/badUrlException.dart';
 import 'package:newpipeextractor_dart/models/comment.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
+import 'package:newpipeextractor_dart/utils/reCaptcha.dart';
 import 'package:newpipeextractor_dart/utils/stringChecker.dart';
 
 class CommentsExtractor {
@@ -9,10 +10,13 @@ class CommentsExtractor {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
     List<YoutubeComment> comments = [];
-    Map<dynamic, dynamic> commentsMap = await NewPipeExtractorDart.extractorChannel.invokeMethod('getComments', {
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod('getComments', {
       "videoUrl": videoUrl
     });
-    commentsMap.forEach((key, map) {
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
+    info.forEach((key, map) {
       comments.add(YoutubeComment(
         author: map['author'],
         commentText: map['commentText'],

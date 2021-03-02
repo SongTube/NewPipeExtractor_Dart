@@ -5,6 +5,7 @@ import 'package:newpipeextractor_dart/models/video.dart';
 import 'package:newpipeextractor_dart/models/streams/videoOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/streams/videoStream.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
+import 'package:newpipeextractor_dart/utils/reCaptcha.dart';
 import 'package:newpipeextractor_dart/utils/streamsParser.dart';
 import 'package:newpipeextractor_dart/utils/stringChecker.dart';
 
@@ -16,9 +17,10 @@ class VideoExtractor {
   static Future<YoutubeVideo> getVideoInfoAndStreams(String videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getVideoInfoAndStreams", { "videoUrl": videoUrl }
     );
+    var info = await task();
     var informationMap = info[0];
     List<AudioOnlyStream> audioOnlyStreams = [];
     info[1].forEach((key, map) {
@@ -29,7 +31,8 @@ class VideoExtractor {
           int.parse(map['averageBitrate']),
           map['formatName'],
           map['formatSuffix'],
-          map['formatMimeType']
+          map['formatMimeType'],
+          int.parse(map['size'])
       ));
     });
     List<VideoOnlyStream> videoOnlyStreams = [];
@@ -41,7 +44,8 @@ class VideoExtractor {
           map['resolution'],
           map['formatName'],
           map['formatSuffix'],
-          map['formatMimeType']
+          map['formatMimeType'],
+          int.parse(map['size'])
       ));
     });
     List<VideoStream> videoStreams = [];
@@ -53,7 +57,8 @@ class VideoExtractor {
           map['resolution'],
           map['formatName'],
           map['formatSuffix'],
-          map['formatMimeType']
+          map['formatMimeType'],
+          int.parse(map['size'])
       ));
     });
     return YoutubeVideo(
@@ -82,9 +87,12 @@ class VideoExtractor {
   static Future<YoutubeVideo> getVideoInformation(String videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
-    var informationMap = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getVideoInformation", { "videoUrl": videoUrl }
     );
+    var informationMap = await task();
+    // Check if we got reCaptcha needed response
+    informationMap = await ReCaptchaPage.checkInfo(informationMap, task);
     return YoutubeVideo(
       id: informationMap['id'],
       url: informationMap['url'],
@@ -113,9 +121,10 @@ class VideoExtractor {
   static Future<List<dynamic>> getAllVideoStreams(String videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getAllVideoStreams", { "videoUrl": videoUrl }
     );
+    var info = await task();
     return info;
   }
   
@@ -123,9 +132,12 @@ class VideoExtractor {
   static Future<List<VideoOnlyStream>> getVideoOnlyStreams(String videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getVideoOnlyStreams", { "videoUrl": videoUrl }
     );
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     List<VideoOnlyStream> videoOnlyStreams = [];
     info.forEach((key, map) {
       videoOnlyStreams.add(
@@ -135,7 +147,8 @@ class VideoExtractor {
           map['resolution'],
           map['formatName'],
           map['formatSuffix'],
-          map['formatMimeType']
+          map['formatMimeType'],
+          int.parse(map['size'])
       ));
     });
     return videoOnlyStreams;
@@ -145,9 +158,12 @@ class VideoExtractor {
   static Future<List<AudioOnlyStream>> getAudioOnlyStreams(String videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getAudioOnlyStreams", { "videoUrl": videoUrl }
     );
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     List<AudioOnlyStream> audioOnlyStreams = [];
     info.forEach((key, map) {
       audioOnlyStreams.add(
@@ -157,7 +173,8 @@ class VideoExtractor {
           int.parse(map['averageBitrate']),
           map['formatName'],
           map['formatSuffix'],
-          map['formatMimeType']
+          map['formatMimeType'],
+          int.parse(map['size'])
       ));
     });
     return audioOnlyStreams;
@@ -167,9 +184,12 @@ class VideoExtractor {
   static Future<List<VideoStream>> getVideoStreams(String videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getVideoStreams", { "videoUrl": videoUrl }
     );
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     List<VideoStream> videoStreams = [];
     info.forEach((key, map) {
       videoStreams.add(
@@ -179,7 +199,8 @@ class VideoExtractor {
           map['resolution'],
           map['formatName'],
           map['formatSuffix'],
-          map['formatMimeType']
+          map['formatMimeType'],
+          int.parse(map['size'])
       ));
     });
     return videoStreams;
@@ -189,9 +210,12 @@ class VideoExtractor {
   static Future<List<StreamInfoItem>> getRelatedStreams(String videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
-    var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "getRelatedStreams", { "videoUrl": videoUrl }
     );
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
     return StreamsParser.parseStreamListFromMap(info);
   }
 
