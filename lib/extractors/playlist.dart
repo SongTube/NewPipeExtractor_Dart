@@ -44,16 +44,4 @@ class PlaylistExtractor {
     info = await ReCaptchaPage.checkInfo(info, task);
     return StreamsParser.parseStreamListFromMap(info);
   }
-
-  /// Gets the next page of the current Playlist
-  static Future<List<StreamInfoItem>> getNextPage() async {
-    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
-      "getPlaylistNextPage",
-    );
-    var info = await task();
-    // Check if we got reCaptcha needed response
-    info = await ReCaptchaPage.checkInfo(info, task);
-    return StreamsParser.parseStreamListFromMap(info);
-  }
-
 }

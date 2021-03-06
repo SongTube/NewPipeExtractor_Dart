@@ -63,9 +63,4 @@ class YoutubePlaylist {
     streams = await PlaylistExtractor.getPlaylistStreams(url);
   }
 
-  /// Retrieve more streams from the playlist
-  Future<void> getMoreStreams() async {
-    streams.addAll(await PlaylistExtractor.getNextPage());
-  }
-
 }

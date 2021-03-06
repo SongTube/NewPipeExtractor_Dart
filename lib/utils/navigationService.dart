@@ -15,7 +15,10 @@ class NavigationService {
   }
 
   Future<dynamic> navigateTo(String _rn, String argument) async {
-    var result = await navigationKey.currentState.pushNamed(_rn, arguments: argument);
+    var result;
+    if (ModalRoute.of(navigationKey.currentContext).settings.name != 'reCaptcha') {
+      result = await navigationKey.currentState.pushNamed(_rn, arguments: argument);
+    }
     return result;
   }
 

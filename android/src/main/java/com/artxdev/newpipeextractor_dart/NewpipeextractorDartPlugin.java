@@ -17,6 +17,7 @@ import com.artxdev.newpipeextractor_dart.youtube.StreamExtractorImpl;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeChannelExtractorImpl;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeCommentsExtractorImpl;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeLinkHandler;
+import com.artxdev.newpipeextractor_dart.youtube.YoutubeMusicExtractor;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubePlaylistExtractorImpl;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeSearchExtractor;
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeTrendingExtractorImpl;
@@ -56,8 +57,8 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
 
   private final YoutubeSearchExtractor searchExtractor
           = new YoutubeSearchExtractor();
-  private final YoutubePlaylistExtractorImpl playlistExtractor
-          = new YoutubePlaylistExtractorImpl();
+  private final YoutubeMusicExtractor musicExtractor
+          = new YoutubeMusicExtractor();
 
   private final String PREFS_COOKIES_KEY = "prefs_cookies_key";
 
@@ -121,7 +122,7 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getComments")) {
           String videoUrl = call.argument("videoUrl");
           try {
-            info[0] = YoutubeCommentsExtractorImpl.getCommnets(videoUrl);
+            info[0] = YoutubeCommentsExtractorImpl.getComments(videoUrl);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
@@ -215,11 +216,32 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
           }
         }
 
+        // Search Youtube for Music
+        if (method.equals("searchYoutubeMusic")) {
+          String query = call.argument("query");
+          try {
+            info[0] = musicExtractor.searchYoutube(query);
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
+        }
+
+        // Get the next page of a previously made searchYoutubeMusic query
+        if (method.equals("getNextMusicPage")) {
+          try {
+            info[0] = musicExtractor.getNextPage();
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
+        }
+
         // Get the Playlist Details
         if (method.equals("getPlaylistDetails")) {
           String playlistUrl = call.argument("playlistUrl");
           try {
-            info[0] = playlistExtractor.getPlaylistDetails(playlistUrl);
+            info[0] = YoutubePlaylistExtractorImpl.getPlaylistDetails(playlistUrl);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
@@ -230,17 +252,7 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getPlaylistStreams")) {
           String playlistUrl = call.argument("playlistUrl");
           try {
-            info[0] = playlistExtractor.getPlaylistStreams(playlistUrl);
-          } catch (Exception e) {
-            e.printStackTrace();
-            info[0].put("error", e.getMessage());
-          }
-        }
-
-        // Get next page from current Playlist
-        if (method.equals("getPlaylistNextPage")) {
-          try {
-            info[0] = playlistExtractor.getNextPage();
+            info[0] = YoutubePlaylistExtractorImpl.getPlaylistStreams(playlistUrl);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());

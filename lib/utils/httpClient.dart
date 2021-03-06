@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:newpipeextractor_dart/exceptions/fatalFailureException.dart';
 import 'package:newpipeextractor_dart/exceptions/requestLimitExceededException.dart';

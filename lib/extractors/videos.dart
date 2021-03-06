@@ -32,7 +32,6 @@ class VideoExtractor {
           map['formatName'],
           map['formatSuffix'],
           map['formatMimeType'],
-          int.parse(map['size'])
       ));
     });
     List<VideoOnlyStream> videoOnlyStreams = [];
@@ -45,7 +44,6 @@ class VideoExtractor {
           map['formatName'],
           map['formatSuffix'],
           map['formatMimeType'],
-          int.parse(map['size'])
       ));
     });
     List<VideoStream> videoStreams = [];
@@ -58,7 +56,6 @@ class VideoExtractor {
           map['formatName'],
           map['formatSuffix'],
           map['formatMimeType'],
-          int.parse(map['size'])
       ));
     });
     return YoutubeVideo(
@@ -148,7 +145,6 @@ class VideoExtractor {
           map['formatName'],
           map['formatSuffix'],
           map['formatMimeType'],
-          int.parse(map['size'])
       ));
     });
     return videoOnlyStreams;
@@ -174,7 +170,6 @@ class VideoExtractor {
           map['formatName'],
           map['formatSuffix'],
           map['formatMimeType'],
-          int.parse(map['size'])
       ));
     });
     return audioOnlyStreams;
@@ -200,7 +195,6 @@ class VideoExtractor {
           map['formatName'],
           map['formatSuffix'],
           map['formatMimeType'],
-          int.parse(map['size'])
       ));
     });
     return videoStreams;

@@ -14,7 +14,8 @@ dependencies:
     sdk: flutter
   http: any
   html: ^0.14.0+3
-
+  flutter_inappwebview: ^4.0.0+4
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

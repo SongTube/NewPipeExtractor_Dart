@@ -15,14 +15,12 @@ import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
 public class YoutubePlaylistExtractorImpl {
 
-    private YoutubePlaylistExtractor extractor;
-    private ListExtractor.InfoItemsPage<StreamInfoItem> itemsPage;
+    static private YoutubePlaylistExtractor extractor;
 
-    public Map<String, String> getPlaylistDetails(String url) throws Exception {
+    static public Map<String, String> getPlaylistDetails(String url) throws Exception {
         extractor = (YoutubePlaylistExtractor) YouTube
                 .getPlaylistExtractor(url);
         extractor.fetchPage();
-        itemsPage = extractor.getInitialPage();
         Map<String, String> playlistDetails = new HashMap<>();
         playlistDetails.put("name", extractor.getName());
         playlistDetails.put("thumbnailUrl", extractor.getThumbnailUrl());
@@ -36,27 +34,15 @@ public class YoutubePlaylistExtractorImpl {
         return playlistDetails;
     }
 
-    public Map<Integer, Map<String, String>> getPlaylistStreams(String url) throws Exception {
-        if (extractor == null) {
-            extractor = (YoutubePlaylistExtractor) YouTube
-                    .getPlaylistExtractor(url);
-            extractor.fetchPage();
-        }
+    static public Map<Integer, Map<String, String>> getPlaylistStreams(String url) throws Exception {
+        extractor = (YoutubePlaylistExtractor) YouTube
+                .getPlaylistExtractor(url);
+        extractor.fetchPage();
         List<StreamInfoItem> items = extractor.getInitialPage().getItems();
         return _fetchResultsFromItems(items);
     }
 
-    public Map<Integer, Map<String, String>> getNextPage() throws Exception {
-        if (itemsPage.hasNextPage()) {
-            itemsPage = extractor.getPage(itemsPage.getNextPage());
-            List<StreamInfoItem> items = itemsPage.getItems();
-            return _fetchResultsFromItems(items);
-        } else {
-            return new HashMap<>();
-        }
-    }
-
-    private Map<Integer, Map<String, String>> _fetchResultsFromItems(List<StreamInfoItem> items) {
+    static private Map<Integer, Map<String, String>> _fetchResultsFromItems(List<StreamInfoItem> items) {
         Map<Integer, Map<String, String>> playlistResults = new HashMap<>();
         for (int i = 0; i < items.size(); i++) {
             Map<String, String> itemMap = new HashMap<>();

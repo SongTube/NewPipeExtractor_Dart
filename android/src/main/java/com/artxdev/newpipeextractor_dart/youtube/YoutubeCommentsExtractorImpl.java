@@ -16,7 +16,7 @@ import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
 public class YoutubeCommentsExtractorImpl {
 
-    public static Map<Integer, Map<String, String>> getCommnets(String url) throws Exception {
+    public static Map<Integer, Map<String, String>> getComments(String url) throws Exception {
         YoutubeCommentsExtractor extractor;
         extractor = (YoutubeCommentsExtractor) YouTube
                 .getCommentsExtractor(url);
