@@ -4,15 +4,21 @@ import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
 import 'package:newpipeextractor_dart/utils/httpClient.dart';
 import 'package:newpipeextractor_dart/utils/navigationService.dart';
 
+bool resolvingCaptcha = false;
+
 class ReCaptchaPage extends StatefulWidget {
 
   static Future<dynamic> checkInfo(info, Future<dynamic> task()) async {
     if ((info as Map).containsKey("error")) {
       if (info["error"].contains("reCaptcha")) {
-        String url = info["error"].split(":").last.trim();
-        await NavigationService.instance.navigateTo("reCaptcha", "http:"+url);
-        var newInfo = await task();
-        return newInfo;
+        if (!resolvingCaptcha) {
+          resolvingCaptcha = true;
+          String url = info["error"].split(":").last.trim();
+          await NavigationService.instance.navigateTo("reCaptcha", "http:"+url);
+          var newInfo = await task();
+          resolvingCaptcha = false;
+          return newInfo;
+        }
       }
     } else {
       return info;
