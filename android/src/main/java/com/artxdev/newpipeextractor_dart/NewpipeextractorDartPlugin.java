@@ -107,7 +107,6 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
             String id = YoutubeLinkHandler.getIdFromStreamUrl(streamUrl);
             info[0].put("id", id);
           } catch (Exception e) {
-            e.printStackTrace();
             info[0].put("id", null);
           }
         }
@@ -119,7 +118,6 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
             String id = YoutubeLinkHandler.getIdFromPlaylistUrl(playlistUrl);
             info[0].put("id", id);
           } catch (Exception e) {
-            e.printStackTrace();
             info[0].put("id", null);
           }
         }
@@ -131,7 +129,6 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
             String id = YoutubeLinkHandler.getIdFromChannelUrl(channelUrl);
             info[0].put("id", id);
           } catch (Exception e) {
-            e.printStackTrace();
             info[0].put("id", null);
           }
         }
