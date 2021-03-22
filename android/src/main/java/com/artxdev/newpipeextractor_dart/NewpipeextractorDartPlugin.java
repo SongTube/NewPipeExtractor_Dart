@@ -103,19 +103,37 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         // Get ID from a Stream URL
         if (method.equals("getIdFromStreamUrl")) {
           String streamUrl = call.argument("streamUrl");
-          info[0].put("id", YoutubeLinkHandler.getIdFromStreamUrl(streamUrl));
+          try {
+            String id = YoutubeLinkHandler.getIdFromStreamUrl(streamUrl);
+            info[0].put("id", id);
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("id", null);
+          }
         }
 
         // Get ID from a Playlist URL
         if (method.equals("getIdFromPlaylistUrl")) {
           String playlistUrl = call.argument("playlistUrl");
-          info[0].put("id", YoutubeLinkHandler.getIdFromPlaylistUrl(playlistUrl));
+          try {
+            String id = YoutubeLinkHandler.getIdFromPlaylistUrl(playlistUrl);
+            info[0].put("id", id);
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("id", null);
+          }
         }
 
         // Get ID from a Channel URL
         if (method.equals("getIdFromChannelUrl")) {
           String channelUrl = call.argument("channelUrl");
-          info[0].put("id", YoutubeLinkHandler.getIdFromChannelUrl(channelUrl));
+          try {
+            String id = YoutubeLinkHandler.getIdFromChannelUrl(channelUrl);
+            info[0].put("id", id);
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("id", null);
+          }
         }
 
         // Gets video comments
