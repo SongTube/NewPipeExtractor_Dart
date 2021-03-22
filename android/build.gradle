@@ -34,19 +34,22 @@ android {
 
     defaultConfig {
         minSdkVersion 22
+        // Required when setting minSdkVersion to 20 or lower
+        multiDexEnabled true
     }
 
     compileOptions {
+        // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
         // Sets Java compatibility to Java 8
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     dependencies {
         // Comment this if you're building Release, this is for Android Studio indexing
         //api "io.flutter:flutter_embedding_debug:1.0.0-d4453f601890ec682bbf8f5659b70f15cce1d67d"
-        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
         implementation 'androidx.annotation:annotation:1.1.0'
         implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.20.11'
         implementation 'org.jsoup:jsoup:1.13.1'
