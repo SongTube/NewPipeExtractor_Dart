@@ -12,9 +12,9 @@ class SearchExtractor {
   /// a YoutubeSearch object which will contain all StreamInfoItem,
   /// PlaylistInfoItem and ChannelInfoItem found, you can then query
   /// for more results running that object [getNextPage()] function
-  static Future<YoutubeSearch> searchYoutube(String query) async {
+  static Future<YoutubeSearch> searchYoutube(String query, List<YoutubeSearchFilter> filters) async {
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
-      "searchYoutube", { "query": query }
+      "searchYoutube", { "query": query, "filters": filters ?? List.empty() }
     );
     var info = await task();
     // Check if we got reCaptcha needed response
@@ -41,9 +41,9 @@ class SearchExtractor {
   /// a YoutubeSearch object which will contain all StreamInfoItem,
   /// PlaylistInfoItem and ChannelInfoItem found, you can then query
   /// for more results running that object [getNextPage()] function
-  static Future<YoutubeMusicSearch> searchYoutubeMusic(String query) async {
+  static Future<YoutubeMusicSearch> searchYoutubeMusic(String query, List<YoutubeSearchFilter> filters) async {
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
-      "searchYoutubeMusic", { "query": query }
+      "searchYoutubeMusic", { "query": query, "filters": filters ?? List.empty() }
     );
     var info = await task();
     // Check if we got reCaptcha needed response

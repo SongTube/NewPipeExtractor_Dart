@@ -51,7 +51,7 @@ class StreamInfoItem {
   /// Gets full YoutubeVideo containing more Information and
   /// all necessary streams for Streaming and Downloading
   Future<YoutubeVideo> get getVideo async {
-    return await VideoExtractor.getVideoInfoAndStreams(url);
+    return await VideoExtractor.getStream(url);
   }
 
   /// Obtains the full information of the authors Channel

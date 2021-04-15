@@ -23,12 +23,9 @@ public class YoutubeMusicExtractor {
     private SearchExtractor extractor;
     private ListExtractor.InfoItemsPage<InfoItem> itemsPage;
 
-    public Map<String, Map<Integer, Map<String, String>>> searchYoutube(String query) throws Exception {
-        List<String> contentFilter = Arrays.asList(
-                YoutubeSearchQueryHandlerFactory.MUSIC_SONGS,
-                YoutubeSearchQueryHandlerFactory.MUSIC_VIDEOS,
-                YoutubeSearchQueryHandlerFactory.MUSIC_PLAYLISTS
-        );
+    public Map<String, Map<Integer, Map<String, String>>> searchYoutube(String query, List<String> filters) throws Exception {
+        List<String> contentFilter = singletonList(YoutubeSearchQueryHandlerFactory.MUSIC_SONGS);
+        if (filters != null) { contentFilter.addAll(filters); }
         extractor = YouTube.getSearchExtractor(query, contentFilter, "");
         extractor.fetchPage();
         itemsPage = extractor.getInitialPage();

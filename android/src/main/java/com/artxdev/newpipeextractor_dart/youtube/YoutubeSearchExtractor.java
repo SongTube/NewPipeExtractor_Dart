@@ -26,8 +26,8 @@ public class YoutubeSearchExtractor {
     private SearchExtractor extractor;
     private ListExtractor.InfoItemsPage<InfoItem> itemsPage;
 
-    public Map<String, Map<Integer, Map<String, String>>> searchYoutube(String query) throws Exception {
-        extractor = YouTube.getSearchExtractor(query);
+    public Map<String, Map<Integer, Map<String, String>>> searchYoutube(String query, List<String> filters) throws Exception {
+        extractor = YouTube.getSearchExtractor(query, filters, "");
         extractor.fetchPage();
         itemsPage = extractor.getInitialPage();
         List<InfoItem> items = itemsPage.getItems();

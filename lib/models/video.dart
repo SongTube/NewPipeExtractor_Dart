@@ -1,6 +1,7 @@
 import 'package:newpipeextractor_dart/exceptions/streamIsNull.dart';
 import 'package:newpipeextractor_dart/extractors/videos.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
+import 'package:newpipeextractor_dart/models/streamSegment.dart';
 import 'package:newpipeextractor_dart/models/streams/audioOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/streams/videoOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/streams/videoStream.dart';
@@ -64,6 +65,9 @@ class YoutubeVideo {
   /// Video Streams (Muxed, Video + Audio)
   List<VideoStream> videoStreams;
 
+  // Video Segments
+  List<StreamSegment> segments;
+
   YoutubeVideo({
     this.id,
     this.url,
@@ -83,7 +87,8 @@ class YoutubeVideo {
     this.thumbnailUrl,
     this.videoOnlyStreams,
     this.audioOnlyStreams,
-    this.videoStreams
+    this.videoStreams,
+    this.segments
   });
 
   /// Transform this object into a StreamInfoItem which is smaller and
@@ -105,7 +110,7 @@ class YoutubeVideo {
   /// then, this function will retrieve those streams and return a new
   /// [YoutubeVideo] object
   Future<YoutubeVideo> get getStreams async =>
-    await VideoExtractor.getVideoInfoAndStreams(url);
+    await VideoExtractor.getStream(url);
   
   /// Gets the best quality video only stream
   /// (By resolution, fps is not taken in consideration)

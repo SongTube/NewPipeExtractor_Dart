@@ -8,7 +8,7 @@ import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeStreamLi
 public class YoutubeLinkHandler {
 
     static public String getIdFromStreamUrl(String url) {
-        String parsedUrl = "";
+        String parsedUrl = null;
         final YoutubeStreamLinkHandlerFactory streamLinkHandler =
                 YoutubeStreamLinkHandlerFactory.getInstance();
         try {
@@ -18,7 +18,7 @@ public class YoutubeLinkHandler {
     }
 
     static public String getIdFromPlaylistUrl(String url) {
-        String parsedUrl = "";
+        String parsedUrl = null;
         final YoutubePlaylistLinkHandlerFactory playlistLinkHandler =
                 YoutubePlaylistLinkHandlerFactory.getInstance();
         try {
@@ -28,7 +28,7 @@ public class YoutubeLinkHandler {
     }
 
     static public String getIdFromChannelUrl(String url) {
-        String parsedUrl = "";
+        String parsedUrl = null;
         final YoutubeChannelLinkHandlerFactory channelLinkHandler =
                 YoutubeChannelLinkHandlerFactory.getInstance();
         try {

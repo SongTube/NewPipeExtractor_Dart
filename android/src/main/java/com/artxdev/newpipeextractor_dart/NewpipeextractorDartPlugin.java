@@ -103,34 +103,22 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         // Get ID from a Stream URL
         if (method.equals("getIdFromStreamUrl")) {
           String streamUrl = call.argument("streamUrl");
-          try {
-            String id = YoutubeLinkHandler.getIdFromStreamUrl(streamUrl);
-            info[0].put("id", id);
-          } catch (Exception e) {
-            info[0].put("id", null);
-          }
+          String id = YoutubeLinkHandler.getIdFromStreamUrl(streamUrl);
+          info[0].put("id", id);
         }
 
         // Get ID from a Playlist URL
         if (method.equals("getIdFromPlaylistUrl")) {
           String playlistUrl = call.argument("playlistUrl");
-          try {
-            String id = YoutubeLinkHandler.getIdFromPlaylistUrl(playlistUrl);
-            info[0].put("id", id);
-          } catch (Exception e) {
-            info[0].put("id", null);
-          }
+          String id = YoutubeLinkHandler.getIdFromPlaylistUrl(playlistUrl);
+          info[0].put("id", id);
         }
 
         // Get ID from a Channel URL
         if (method.equals("getIdFromChannelUrl")) {
           String channelUrl = call.argument("channelUrl");
-          try {
-            String id = YoutubeLinkHandler.getIdFromChannelUrl(channelUrl);
-            info[0].put("id", id);
-          } catch (Exception e) {
-            info[0].put("id", null);
-          }
+          String id = YoutubeLinkHandler.getIdFromChannelUrl(channelUrl);
+          info[0].put("id", id);
         }
 
         // Gets video comments
@@ -148,7 +136,7 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getVideoInfoAndStreams")) {
           String videoUrl = call.argument("videoUrl");
           try {
-            listMaps[0] = StreamExtractorImpl.getVideoInfoAndStreams(videoUrl);
+            listMaps[0] = StreamExtractorImpl.getStream(videoUrl);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
@@ -159,7 +147,7 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getVideoInformation")) {
           String videoUrl = call.argument("videoUrl");
           try {
-            info[0] = StreamExtractorImpl.getVideoInformation(videoUrl);
+            info[0] = StreamExtractorImpl.getInfo(videoUrl);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
@@ -170,7 +158,7 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getAllVideoStreams")) {
           String videoUrl = call.argument("videoUrl");
           try {
-            listMaps[0] = StreamExtractorImpl.getAllVideoStreams(videoUrl);
+            listMaps[0] = StreamExtractorImpl.getMediaStreams(videoUrl);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
@@ -203,7 +191,18 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getVideoStreams")) {
           String videoUrl = call.argument("videoUrl");
           try {
-            info[0] = StreamExtractorImpl.getVideoStreams(videoUrl);
+            info[0] = StreamExtractorImpl.getMuxedStreams(videoUrl);
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
+        }
+
+        // Get Video Segments
+        if (method.equals("getVideoSegments")) {
+          String videoUrl = call.argument("videoUrl");
+          try {
+            info[0] = StreamExtractorImpl.getStreamSegments(videoUrl);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
@@ -213,8 +212,9 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         // Search Youtube for Videos/Channels/Playlists
         if (method.equals("searchYoutube")) {
           String query = call.argument("query");
+          List<String> filters = call.argument("filters");
           try {
-            info[0] = searchExtractor.searchYoutube(query);
+            info[0] = searchExtractor.searchYoutube(query, filters);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
@@ -234,8 +234,9 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         // Search Youtube for Music
         if (method.equals("searchYoutubeMusic")) {
           String query = call.argument("query");
+          List<String> filters = call.argument("filters");
           try {
-            info[0] = musicExtractor.searchYoutube(query);
+            info[0] = musicExtractor.searchYoutube(query, filters);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
@@ -370,6 +371,5 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
     functions.add("getAllVideoStreams");
     return functions.contains(methodName);
   }
-
 }
 

@@ -1,4 +1,5 @@
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
+import 'package:newpipeextractor_dart/models/streamSegment.dart';
 
 class StreamsParser {
 
@@ -18,6 +19,20 @@ class StreamsParser {
       ));
     });
     return streams;
+  }
+
+  /// Retrieves a list of StreamSegment from Map
+  static List<StreamSegment> parseStreamSegmentListFromMap(info) {
+    List<StreamSegment> segments = <StreamSegment>[];
+    info.forEach((_, map) {
+      segments.add(StreamSegment(
+        map['url'],
+        map['title'],
+        map['previewUrl'],
+        int.parse(map['startTimeSeconds'])
+      ));
+    });
+    return segments;
   }
 
 }
