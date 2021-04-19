@@ -14,4 +14,9 @@ class YoutubeSearchFilter {
   static final String musicPlaylists = "music_playlists";
   static final String musicArtists = "music_artists";
 
+  // Lists
+  static final List<String> searchFilters = [
+    videos, channels, playlists, musicSongs, musicVideos
+  ];
+
 }

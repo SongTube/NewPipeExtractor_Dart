@@ -12,7 +12,7 @@ class SearchExtractor {
   /// a YoutubeSearch object which will contain all StreamInfoItem,
   /// PlaylistInfoItem and ChannelInfoItem found, you can then query
   /// for more results running that object [getNextPage()] function
-  static Future<YoutubeSearch> searchYoutube(String query, List<YoutubeSearchFilter> filters) async {
+  static Future<YoutubeSearch> searchYoutube(String query, List<String> filters) async {
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "searchYoutube", { "query": query, "filters": filters ?? List.empty() }
     );
@@ -41,7 +41,7 @@ class SearchExtractor {
   /// a YoutubeSearch object which will contain all StreamInfoItem,
   /// PlaylistInfoItem and ChannelInfoItem found, you can then query
   /// for more results running that object [getNextPage()] function
-  static Future<YoutubeMusicSearch> searchYoutubeMusic(String query, List<YoutubeSearchFilter> filters) async {
+  static Future<YoutubeMusicSearch> searchYoutubeMusic(String query, List<String> filters) async {
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       "searchYoutubeMusic", { "query": query, "filters": filters ?? List.empty() }
     );
