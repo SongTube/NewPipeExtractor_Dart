@@ -4,6 +4,7 @@ import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeTrendingExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,11 @@ public class YoutubeTrendingExtractorImpl {
             itemMap.put("uploaderName", item.getUploaderName());
             itemMap.put("uploaderUrl", item.getUploaderUrl());
             itemMap.put("uploadDate", item.getTextualUploadDate());
+            try {
+                itemMap.put("date", item.getUploadDate().offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+            } catch (NullPointerException ignore) {
+                itemMap.put("date", null);
+            }
             itemMap.put("thumbnailUrl", item.getThumbnailUrl());
             itemMap.put("duration", String.valueOf(item.getDuration()));
             itemMap.put("viewCount", String.valueOf(item.getViewCount()));

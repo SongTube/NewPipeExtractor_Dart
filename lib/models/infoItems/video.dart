@@ -26,6 +26,9 @@ class StreamInfoItem {
   /// Video date
   final String uploadDate;
 
+  /// Video full date
+  final String date;
+
   /// Video duration in seconds (s)
   final int duration;
 
@@ -39,6 +42,7 @@ class StreamInfoItem {
     this.uploaderName,
     this.uploaderUrl,
     this.uploadDate,
+    this.date,
     this.duration,
     this.viewCount
   ) {
@@ -69,6 +73,7 @@ class StreamInfoItem {
       'uploaderName': uploaderName,
       'uploaderUrl': uploaderUrl,
       'uploadDate': uploadDate,
+      'date': date,
       'duration': duration.toString(),
       'viewCount': viewCount.toString()
     };
@@ -83,6 +88,7 @@ class StreamInfoItem {
       map['uploaderName'],
       map['uploaderUrl'],
       map['uploadDate'],
+      map['date'],
       int.parse(map['duration']),
       int.parse(map['viewCount'])
     );
@@ -112,6 +118,7 @@ class StreamInfoItem {
           'uploaderName': e.uploaderName,
           'uploaderUrl': e.uploaderUrl,
           'uploadDate': e.uploadDate,
+          'date': e.date,
           'duration': e.duration.toString(),
           'viewCount': e.viewCount.toString()
         }

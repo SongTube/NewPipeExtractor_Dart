@@ -101,6 +101,7 @@ class YoutubeVideo {
       uploaderName,
       uploaderUrl,
       uploadDate,
+      uploadDate,
       length,
       viewCount
     );

@@ -10,6 +10,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 
 import static java.util.Collections.singletonList;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -77,6 +78,11 @@ public class YoutubeMusicExtractor {
                 itemMap.put("uploaderName", item.getUploaderName());
                 itemMap.put("uploaderUrl", item.getUploaderUrl());
                 itemMap.put("uploadDate", item.getTextualUploadDate());
+                try {
+                    itemMap.put("date", item.getUploadDate().offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+                } catch (NullPointerException ignore) {
+                    itemMap.put("date", null);
+                }
                 itemMap.put("thumbnailUrl", item.getThumbnailUrl());
                 itemMap.put("duration", String.valueOf(item.getDuration()));
                 itemMap.put("viewCount", String.valueOf(item.getViewCount()));

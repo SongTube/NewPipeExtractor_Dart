@@ -14,6 +14,7 @@ class StreamsParser {
         map['uploaderName'],
         map['uploaderUrl'],
         map['uploadDate'],
+        map['date'],
         int.parse(map['duration']),
         int.parse(map['viewCount'])
       ));
