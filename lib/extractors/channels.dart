@@ -51,7 +51,7 @@ class ChannelExtractor {
   static Future<String> getAvatarUrl(String channelId) async {
     var url = 'https://www.youtube.com/channel/$channelId?hl=en';
     var client = http.Client();
-    var response = await client.get(url, headers: ExtractorHttpClient.defaultHeaders);
+    var response = await client.get(Uri.parse(url), headers: ExtractorHttpClient.defaultHeaders);
     var raw = response.body;
     return parser.parse(raw)
       .querySelector('meta[property="og:image"]')
