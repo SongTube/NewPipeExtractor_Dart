@@ -7,14 +7,14 @@ import 'package:newpipeextractor_dart/utils/navigationService.dart';
 bool resolvingCaptcha = false;
 
 class ReCaptchaPage extends StatefulWidget {
-
   static Future<dynamic> checkInfo(info, Future<dynamic> task()) async {
     if ((info as Map).containsKey("error")) {
       if (info["error"].contains("reCaptcha")) {
         if (!resolvingCaptcha) {
           resolvingCaptcha = true;
           String url = info["error"].split(":").last.trim();
-          await NavigationService.instance.navigateTo("reCaptcha", "http:"+url);
+          await NavigationService.instance
+              .navigateTo("reCaptcha", "http:" + url);
           var newInfo = await task();
           resolvingCaptcha = false;
           return newInfo;
@@ -30,7 +30,6 @@ class ReCaptchaPage extends StatefulWidget {
 }
 
 class _ReCaptchaPageState extends State<ReCaptchaPage> {
-
   InAppWebViewController controller;
   String foundCookies = "";
 
@@ -42,12 +41,9 @@ class _ReCaptchaPageState extends State<ReCaptchaPage> {
         appBar: AppBar(
           elevation: 0,
           title: ListTile(
-            title: Text("reCaptcha", style: TextStyle(
-              color: Colors.white
-            )),
-            subtitle: Text("Solve the reCaptcha and confirm", style: TextStyle(
-              color: Colors.white.withOpacity(0.6)
-            )),
+            title: Text("reCaptcha", style: TextStyle(color: Colors.white)),
+            subtitle: Text("Solve the reCaptcha and confirm",
+                style: TextStyle(color: Colors.white.withOpacity(0.6))),
           ),
           backgroundColor: Colors.redAccent,
           actions: [
@@ -56,9 +52,8 @@ class _ReCaptchaPageState extends State<ReCaptchaPage> {
               color: Colors.white,
               onPressed: () async {
                 String currentUrl = await controller?.getUrl() ?? url;
-                var info = await NewPipeExtractorDart.extractorChannel.invokeMethod(
-                  'getCookieByUrl', { "url": currentUrl }
-                );
+                var info = await NewPipeExtractorDart.extractorChannel
+                    .invokeMethod('getCookieByUrl', {"url": currentUrl});
                 String cookies = info['cookie'];
                 handleCookies(cookies);
                 // Sometimes cookies are inside the url
@@ -66,24 +61,23 @@ class _ReCaptchaPageState extends State<ReCaptchaPage> {
                 if (abuseStart != -1) {
                   final int abuseEnd = currentUrl.indexOf("+path");
                   try {
-                    String abuseCookie = currentUrl.substring(abuseStart + 12, abuseEnd);
-                    abuseCookie = await NewPipeExtractorDart.extractorChannel.invokeMethod(
-                      'decodeCookie', { "cookie": abuseCookie }
-                    );
+                    String abuseCookie =
+                        currentUrl.substring(abuseStart + 12, abuseEnd);
+                    abuseCookie = await NewPipeExtractorDart.extractorChannel
+                        .invokeMethod('decodeCookie', {"cookie": abuseCookie});
                     handleCookies(abuseCookie);
                   } catch (_) {}
                 }
-                await NewPipeExtractorDart.extractorChannel.invokeMethod(
-                  'setCookie', { "cookie": foundCookies }
-                );
+                await NewPipeExtractorDart.extractorChannel
+                    .invokeMethod('setCookie', {"cookie": foundCookies});
                 Navigator.pop(context);
               },
             ),
           ],
         ),
         body: InAppWebView(
-          initialUrl: url,
-          initialHeaders: ExtractorHttpClient.defaultHeaders,
+          initialUrlRequest: URLRequest(
+              url: Uri.parse(url), headers: ExtractorHttpClient.defaultHeaders),
           onLoadStop: (cont, _) {
             controller = cont;
           },
@@ -96,10 +90,10 @@ class _ReCaptchaPageState extends State<ReCaptchaPage> {
     if (cookies == null) {
       return;
     }
-    if (cookies.contains("s_gl=") || cookies.contains("goojf=")
-      || cookies.contains("VISITOR_INFO1_LIVE=")
-      || cookies.contains("GOOGLE_ABUSE_EXEMPTION=")
-    ) {
+    if (cookies.contains("s_gl=") ||
+        cookies.contains("goojf=") ||
+        cookies.contains("VISITOR_INFO1_LIVE=") ||
+        cookies.contains("GOOGLE_ABUSE_EXEMPTION=")) {
       if (foundCookies.contains(cookies)) {
         return;
       }
@@ -112,5 +106,4 @@ class _ReCaptchaPageState extends State<ReCaptchaPage> {
       }
     }
   }
-
 }
