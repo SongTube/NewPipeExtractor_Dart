@@ -5,34 +5,34 @@ import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 class YoutubePlaylist {
 
   /// Playlist ID
-  String id;
+  String? id;
 
   /// Playlist name
-  String name;
+  String? name;
 
   /// Playlist full URL
-  String url;
+  String? url;
 
   /// Playlist authors name
-  String uploaderName;
+  String? uploaderName;
 
   /// Playlist author avatar url
-  String uploaderAvatarUrl;
+  String? uploaderAvatarUrl;
 
   /// Playlist channel url
-  String uploaderUrl;
+  String? uploaderUrl;
 
   /// Playlist banner url
-  String bannerUrl;
+  String? bannerUrl;
 
   /// Playlist thumbnail url
-  String thumbnailUrl;
+  String? thumbnailUrl;
 
   /// Playlist videos ammount
   int streamCount;
 
   /// Playlist streams (Videos)
-  List<StreamInfoItem> streams;
+  List<StreamInfoItem>? streams;
 
   YoutubePlaylist(
     this.id,

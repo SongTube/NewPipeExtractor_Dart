@@ -3,28 +3,28 @@ import 'package:newpipeextractor_dart/models/infoItems/channel.dart';
 class YoutubeChannel {
 
   /// Channel Id
-  String id;
+  String? id;
 
   /// Channel name
-  String name;
+  String? name;
 
   /// Channel Url
-  String url;
+  String? url;
 
   /// Channel avatar image Url
-  String avatarUrl;
+  String? avatarUrl;
 
   /// Channel banner image Url
-  String bannerUrl;
+  String? bannerUrl;
 
   /// Channel description
-  String description;
+  String? description;
 
   /// Channel feed Url
-  String feedUrl;
+  String? feedUrl;
 
   /// Channel subscriber Count
-  int subscriberCount;
+  int? subscriberCount;
 
   YoutubeChannel({
     this.id,

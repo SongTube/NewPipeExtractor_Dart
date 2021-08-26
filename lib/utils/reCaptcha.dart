@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
@@ -30,12 +32,12 @@ class ReCaptchaPage extends StatefulWidget {
 }
 
 class _ReCaptchaPageState extends State<ReCaptchaPage> {
-  InAppWebViewController controller;
+  InAppWebViewController? controller;
   String foundCookies = "";
 
   @override
   Widget build(BuildContext context) {
-    String url = ModalRoute.of(context).settings.arguments as String;
+    String url = ModalRoute.of(context)!.settings.arguments as String;
     return Material(
       child: Scaffold(
         appBar: AppBar(
@@ -51,20 +53,20 @@ class _ReCaptchaPageState extends State<ReCaptchaPage> {
               icon: Icon(Icons.check_rounded),
               color: Colors.white,
               onPressed: () async {
-                String currentUrl = await controller?.getUrl() ?? url;
+                String currentUrl = await (controller?.getUrl() as FutureOr<String?>) ?? url;
                 var info = await NewPipeExtractorDart.extractorChannel
                     .invokeMethod('getCookieByUrl', {"url": currentUrl});
-                String cookies = info['cookie'];
+                String? cookies = info['cookie'];
                 handleCookies(cookies);
                 // Sometimes cookies are inside the url
                 final int abuseStart = currentUrl.indexOf("google_abuse=");
                 if (abuseStart != -1) {
                   final int abuseEnd = currentUrl.indexOf("+path");
                   try {
-                    String abuseCookie =
+                    String? abuseCookie =
                         currentUrl.substring(abuseStart + 12, abuseEnd);
-                    abuseCookie = await NewPipeExtractorDart.extractorChannel
-                        .invokeMethod('decodeCookie', {"cookie": abuseCookie});
+                    abuseCookie = await (NewPipeExtractorDart.extractorChannel
+                        .invokeMethod('decodeCookie', {"cookie": abuseCookie}) as FutureOr<String>);
                     handleCookies(abuseCookie);
                   } catch (_) {}
                 }
@@ -86,7 +88,7 @@ class _ReCaptchaPageState extends State<ReCaptchaPage> {
     );
   }
 
-  void handleCookies(String cookies) {
+  void handleCookies(String? cookies) {
     if (cookies == null) {
       return;
     }

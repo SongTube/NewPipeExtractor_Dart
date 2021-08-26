@@ -6,16 +6,16 @@ import 'package:newpipeextractor_dart/models/playlist.dart';
 class PlaylistInfoItem {
 
   /// Playlist URL
-  final String url;
+  final String? url;
 
   /// Playlist name
-  final String name;
+  final String? name;
 
   /// Playlist uploader channel name
-  final String uploaderName;
+  final String? uploaderName;
 
   /// Playlist thumbnail url
-  final String thumbnailUrl;
+  final String? thumbnailUrl;
 
   /// Playlist videos count
   final int streamCount;
@@ -59,7 +59,7 @@ class PlaylistInfoItem {
   /// Get a list of PlaylistInfoItem from a simple (valid) json String
   static List<PlaylistInfoItem> fromJsonString(String jsonString) {
     Map<String, dynamic> decodedMap = jsonDecode(jsonString);
-    List<dynamic> list = decodedMap['listPlaylist'];
+    List<dynamic>? list = decodedMap['listPlaylist'];
     List<PlaylistInfoItem> playlists = [];
     if (list == null) return [];
     list.forEach((element) {

@@ -6,19 +6,19 @@ import 'package:newpipeextractor_dart/models/channel.dart';
 class ChannelInfoItem {
 
   /// Channel URL
-  final String url;
+  final String? url;
 
   /// Channel name
-  final String name;
+  final String? name;
 
   /// Channel description
-  final String description;
+  final String? description;
 
   /// Channel avatar url
-  final String thumbnailUrl;
+  final String? thumbnailUrl;
 
   /// Channel subscriber count
-  final int subscriberCount;
+  final int? subscriberCount;
 
   /// Channel number of videos uploaded
   final int streamCount;
@@ -65,7 +65,7 @@ class ChannelInfoItem {
   /// Get a list of ChannelInfoItem from a simple (valid) json String
   static List<ChannelInfoItem> fromJsonString(String jsonString) {
     Map<dynamic, dynamic> decodedMap = jsonDecode(jsonString);
-    List<dynamic> list = decodedMap['listChannels'];
+    List<dynamic>? list = decodedMap['listChannels'];
     List<ChannelInfoItem> channels = [];
     if (list == null) return [];
     list.forEach((element) {

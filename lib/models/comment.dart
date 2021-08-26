@@ -1,31 +1,31 @@
 class YoutubeComment {
 
   /// Comment Author
-  String author;
+  String? author;
 
   /// Full comment text
-  String commentText;
+  String? commentText;
 
   /// Comment upload date
-  String uploadDate;
+  String? uploadDate;
 
   /// Author avatar image Url
-  String uploaderAvatarUrl;
+  String? uploaderAvatarUrl;
 
   /// Author channel url
-  String uploaderUrl;
+  String? uploaderUrl;
 
   /// Comment Id
-  String commentId;
+  String? commentId;
 
   /// Like Count
-  int likeCount;
+  int? likeCount;
 
   /// Is comment hearted by the video Author
-  bool hearted;
+  bool? hearted;
 
   /// Is comment pinned by the video Author
-  bool pinned;
+  bool? pinned;
 
   YoutubeComment({
     this.author,

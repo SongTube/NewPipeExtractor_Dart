@@ -14,7 +14,7 @@ class SearchExtractor {
   /// for more results running that object [getNextPage()] function
   static Future<YoutubeSearch> searchYoutube(String query, List<String> filters) async {
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
-      "searchYoutube", { "query": query, "filters": filters ?? List.empty() }
+      "searchYoutube", { "query": query, "filters": filters }
     );
     var info = await task();
     // Check if we got reCaptcha needed response
@@ -43,7 +43,7 @@ class SearchExtractor {
   /// for more results running that object [getNextPage()] function
   static Future<YoutubeMusicSearch> searchYoutubeMusic(String query, List<String> filters) async {
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
-      "searchYoutubeMusic", { "query": query, "filters": filters ?? List.empty() }
+      "searchYoutubeMusic", { "query": query, "filters": filters }
     );
     var info = await task();
     // Check if we got reCaptcha needed response

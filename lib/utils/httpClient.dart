@@ -11,26 +11,26 @@ class ExtractorHttpClient {
         'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0'
   };
 
-  static Future<int> getContentLength(String url) async {
+  static Future<int?> getContentLength(String url) async {
     var response = await http.head(Uri.parse(url), headers: defaultHeaders);
     return int.tryParse(response.headers['content-length'] ?? '');
   }
 
   static Stream<List<int>> getStream(dynamic stream,
-      {Map<String, String> headers,
+      {Map<String, String>? headers,
       bool validate = true,
       int start = 0,
       int errorCount = 0}) async* {
-    String url = stream.url;
+    String? url = stream.url;
     var bytesCount = start;
     var client = http.Client();
     for (var i = start; i < stream.size; i += 9898989) {
       try {
-        final request = http.Request('get', Uri.parse(url));
+        final request = http.Request('get', Uri.parse(url!));
         request.headers['range'] = 'bytes=$i-${i + 9898989 - 1}';
         defaultHeaders.forEach((key, value) {
           if (request.headers[key] == null) {
-            request.headers[key] = defaultHeaders[key];
+            request.headers[key] = defaultHeaders[key]!;
           }
         });
         final response = await client.send(request);
@@ -61,7 +61,7 @@ class ExtractorHttpClient {
   }
 
   static void _validateResponse(http.BaseResponse response, int statusCode) {
-    var request = response.request;
+    var request = response.request!;
     if (request.url.host.endsWith('.google.com') &&
         request.url.path.startsWith('/sorry/')) {
       throw RequestLimitExceededException.httpRequest(response);

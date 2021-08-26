@@ -5,7 +5,7 @@ import 'package:newpipeextractor_dart/utils/stringChecker.dart';
 class YoutubeId {
 
   /// Get ID from any Stream URL, return [null] on failure
-  static Future<String> getIdFromStreamUrl(String url) async {
+  static Future<String?> getIdFromStreamUrl(String url) async {
     if (url == null || StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
     var id = await NewPipeExtractorDart.extractorChannel.invokeMethod(
@@ -15,7 +15,7 @@ class YoutubeId {
   }
 
   /// Get ID from any Playlist URL, return [null] on failure
-  static Future<String> getIdFromPlaylistUrl(String url) async {
+  static Future<String?> getIdFromPlaylistUrl(String url) async {
     if (url == null || StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
     var id = await NewPipeExtractorDart.extractorChannel.invokeMethod(
@@ -25,7 +25,7 @@ class YoutubeId {
   }
 
   /// Get ID from any Channel URL, return [null] on failure
-  static Future<String> getIdFromChannelUrl(String url) async {
+  static Future<String?> getIdFromChannelUrl(String url) async {
     if (url == null || StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
     var id = await NewPipeExtractorDart.extractorChannel.invokeMethod(

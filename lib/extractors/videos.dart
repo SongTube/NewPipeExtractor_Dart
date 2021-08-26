@@ -15,7 +15,7 @@ class VideoExtractor {
   /// This functions retrieves a full [YoutubeVideo] object which
   /// has all the information from that video including all Video,
   /// Audio and Muxed Streams (Muxed = Video + Audio)
-  static Future<YoutubeVideo> getStream(String videoUrl) async {
+  static Future<YoutubeVideo> getStream(String? videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
@@ -117,7 +117,7 @@ class VideoExtractor {
   /// [1] AudioOnlyStreams
   /// [2] VideoStreams
   /// 
-  static Future<List<dynamic>> getMediaStreams(String videoUrl) async {
+  static Future<List<dynamic>?> getMediaStreams(String videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(

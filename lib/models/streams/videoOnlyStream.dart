@@ -2,13 +2,13 @@ import 'package:newpipeextractor_dart/utils/httpClient.dart';
 
 class VideoOnlyStream {
 
-  String torrentUrl;
-  String url;
-  String resolution;
-  String formatName;
-  String formatSuffix;
-  String formatMimeType;
-  int size;
+  String? torrentUrl;
+  String? url;
+  String? resolution;
+  String? formatName;
+  String? formatSuffix;
+  String? formatMimeType;
+  int? size;
 
   VideoOnlyStream(
     this.torrentUrl,
@@ -20,10 +20,10 @@ class VideoOnlyStream {
   );
 
   Future<void> getContentSize() async { 
-    size = await ExtractorHttpClient.getContentLength(url);
+    size = await ExtractorHttpClient.getContentLength(url!);
   }
 
-  double get totalKiloBytes => size / 1024;
+  double get totalKiloBytes => size! / 1024;
 
   double get totalMegaBytes => totalKiloBytes / 1024;
 

@@ -1,6 +1,6 @@
 class StreamThumbnail {
 
-  final String id;
+  final String? id;
    
   StreamThumbnail(this.id);
 

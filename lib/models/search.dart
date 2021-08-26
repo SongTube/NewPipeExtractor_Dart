@@ -6,16 +6,16 @@ import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 class YoutubeSearch {
 
   /// SearchQuery
-  String query;
+  String? query;
 
   /// Videos from Search
-  List<StreamInfoItem> searchVideos;
+  List<StreamInfoItem>? searchVideos;
 
   /// Channels from Search
-  List<ChannelInfoItem> searchChannels;
+  List<ChannelInfoItem>? searchChannels;
 
   /// Playlists from Search
-  List<PlaylistInfoItem> searchPlaylists;
+  List<PlaylistInfoItem>? searchPlaylists;
 
   YoutubeSearch({
     this.query,
@@ -23,18 +23,18 @@ class YoutubeSearch {
     this.searchChannels,
     this.searchPlaylists
   }) {
-    dynamicSearchResultsList.addAll(searchChannels);
-    dynamicSearchResultsList.addAll(searchPlaylists);
-    dynamicSearchResultsList.addAll(searchVideos);
+    dynamicSearchResultsList.addAll(searchChannels!);
+    dynamicSearchResultsList.addAll(searchPlaylists!);
+    dynamicSearchResultsList.addAll(searchVideos!);
   }
 
   /// Get next page content and include all results 
   /// in the current object of YoutubeSearch
   Future<void> getNextPage() async {
     var newItems = await SearchExtractor.getNextPage();
-    searchVideos.addAll(newItems[0] as List<StreamInfoItem>);
-    searchPlaylists.addAll(newItems[1] as List<PlaylistInfoItem>);
-    searchChannels.addAll(newItems[2] as List<ChannelInfoItem>);
+    searchVideos!.addAll(newItems[0] as List<StreamInfoItem>);
+    searchPlaylists!.addAll(newItems[1] as List<PlaylistInfoItem>);
+    searchChannels!.addAll(newItems[2] as List<ChannelInfoItem>);
     dynamicSearchResultsList.addAll(newItems[2]);
     dynamicSearchResultsList.addAll(newItems[1]);
     dynamicSearchResultsList.addAll(newItems[0]);
@@ -52,16 +52,16 @@ class YoutubeSearch {
 class YoutubeMusicSearch {
 
   /// SearchQuery
-  String query;
+  String? query;
 
   /// Videos from Search
-  List<StreamInfoItem> searchVideos;
+  List<StreamInfoItem>? searchVideos;
 
   /// Channels from Search
-  List<ChannelInfoItem> searchChannels;
+  List<ChannelInfoItem>? searchChannels;
 
   /// Playlists from Search
-  List<PlaylistInfoItem> searchPlaylists;
+  List<PlaylistInfoItem>? searchPlaylists;
 
   YoutubeMusicSearch({
     this.query,
@@ -69,18 +69,18 @@ class YoutubeMusicSearch {
     this.searchChannels,
     this.searchPlaylists
   }) {
-    dynamicSearchResultsList.addAll(searchChannels);
-    dynamicSearchResultsList.addAll(searchPlaylists);
-    dynamicSearchResultsList.addAll(searchVideos);
+    dynamicSearchResultsList.addAll(searchChannels!);
+    dynamicSearchResultsList.addAll(searchPlaylists!);
+    dynamicSearchResultsList.addAll(searchVideos!);
   }
 
   /// Get next page content and include all results 
   /// in the current object of YoutubeSearch
   Future<void> getNextPage() async {
     var newItems = await SearchExtractor.getNextMusicPage();
-    searchVideos.addAll(newItems[0] as List<StreamInfoItem>);
-    searchPlaylists.addAll(newItems[1] as List<PlaylistInfoItem>);
-    searchChannels.addAll(newItems[2] as List<ChannelInfoItem>);
+    searchVideos!.addAll(newItems[0] as List<StreamInfoItem>);
+    searchPlaylists!.addAll(newItems[1] as List<PlaylistInfoItem>);
+    searchChannels!.addAll(newItems[2] as List<ChannelInfoItem>);
     dynamicSearchResultsList.addAll(newItems[2]);
     dynamicSearchResultsList.addAll(newItems[1]);
     dynamicSearchResultsList.addAll(newItems[0]);

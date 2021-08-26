@@ -9,7 +9,7 @@ import 'package:newpipeextractor_dart/utils/stringChecker.dart';
 class PlaylistExtractor {
 
   /// Extract all the details of the given Playlist URL into a YoutubePlaylist object
-  static Future<YoutubePlaylist> getPlaylistDetails(String playlistUrl) async {
+  static Future<YoutubePlaylist> getPlaylistDetails(String? playlistUrl) async {
     if (playlistUrl == null || StringChecker.hasWhiteSpace(playlistUrl))
       throw BadUrlException("Url is null or contains white space");
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
@@ -33,7 +33,7 @@ class PlaylistExtractor {
 
   /// Extract all the Streams from the given Playlist URL
   /// as a list of StreamInfoItem
-  static Future<List<StreamInfoItem>> getPlaylistStreams(String playlistUrl) async {
+  static Future<List<StreamInfoItem>> getPlaylistStreams(String? playlistUrl) async {
     if (playlistUrl == null || StringChecker.hasWhiteSpace(playlistUrl))
       throw BadUrlException("Url is null or contains white space");
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(

@@ -13,7 +13,7 @@ class ChannelExtractor {
 
   /// Retrieve all ChannelInfo and
   /// build it into our own Model
-  static Future<YoutubeChannel> channelInfo(String url) async {
+  static Future<YoutubeChannel> channelInfo(String? url) async {
     if (url == null || StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod('getChannel', {
@@ -48,7 +48,7 @@ class ChannelExtractor {
   }
  
   /// Retrieve high quality Channel Avatar URL
-  static Future<String> getAvatarUrl(String channelId) async {
+  static Future<String?> getAvatarUrl(String channelId) async {
     var url = 'https://www.youtube.com/channel/$channelId?hl=en';
     var client = http.Client();
     var response = await client.get(Uri.parse(url), headers: ExtractorHttpClient.defaultHeaders);

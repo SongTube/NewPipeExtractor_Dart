@@ -9,31 +9,31 @@ import 'package:newpipeextractor_dart/utils/thumbnails.dart';
 class StreamInfoItem {
 
   /// Video URL
-  final String url;
+  final String? url;
 
   /// Video ID
-  final String id;
+  final String? id;
 
   /// Video name
-  final String name;
+  final String? name;
 
   /// Video uploader Name
-  final String uploaderName;
+  final String? uploaderName;
 
   /// Video uploader channel url
-  final String uploaderUrl;
+  final String? uploaderUrl;
 
   /// Video date
-  final String uploadDate;
+  final String? uploadDate;
 
   /// Video full date
-  final String date;
+  final String? date;
 
   /// Video duration in seconds (s)
-  final int duration;
+  final int? duration;
 
   /// Video view count
-  final int viewCount;
+  final int? viewCount;
 
   StreamInfoItem(
     this.url,
@@ -50,7 +50,7 @@ class StreamInfoItem {
   }
 
   /// Stream Thumbnails
-  StreamThumbnail thumbnails;
+  StreamThumbnail? thumbnails;
 
   /// Gets full YoutubeVideo containing more Information and
   /// all necessary streams for Streaming and Downloading
@@ -97,7 +97,7 @@ class StreamInfoItem {
   /// Get a list of StreamInfoItem from a simple (valid) json String
   static List<StreamInfoItem> fromJsonString(String jsonString) {
     Map<String, dynamic> decodedMap = jsonDecode(jsonString);
-    List<dynamic> list = decodedMap['listStream'];
+    List<dynamic>? list = decodedMap['listStream'];
     List<StreamInfoItem> streams = [];
     if (list == null) return [];
     list.forEach((element) {
@@ -109,7 +109,7 @@ class StreamInfoItem {
 
   /// Transform a list of StreamInfoItem into a simple json String
   static String listToJson(List<StreamInfoItem> list) {
-    List<Map<String, String>> x = list
+    List<Map<String, String?>> x = list
       .map((e) => 
         {
           'url': e.url,

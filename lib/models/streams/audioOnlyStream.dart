@@ -2,13 +2,13 @@ import 'package:newpipeextractor_dart/utils/httpClient.dart';
 
 class AudioOnlyStream {
 
-  String torrentUrl;
-  String url;
+  String? torrentUrl;
+  String? url;
   int averageBitrate;
-  String formatName;
-  String formatSuffix;
-  String formatMimeType;
-  int size;
+  String? formatName;
+  String? formatSuffix;
+  String? formatMimeType;
+  int? size;
 
   AudioOnlyStream(
     this.torrentUrl,
@@ -20,10 +20,10 @@ class AudioOnlyStream {
   );
 
   Future<void> getContentSize() async { 
-    size = await ExtractorHttpClient.getContentLength(url);
+    size = await ExtractorHttpClient.getContentLength(url!);
   }
 
-  double get totalKiloBytes => size / 1024;
+  double get totalKiloBytes => size! / 1024;
 
   double get totalMegaBytes => totalKiloBytes / 1024;
 
