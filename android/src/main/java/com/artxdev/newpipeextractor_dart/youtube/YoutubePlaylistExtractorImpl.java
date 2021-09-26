@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
@@ -26,7 +27,11 @@ public class YoutubePlaylistExtractorImpl {
         playlistDetails.put("name", extractor.getName());
         playlistDetails.put("thumbnailUrl", extractor.getThumbnailUrl());
         playlistDetails.put("bannerUrl", extractor.getBannerUrl());
-        playlistDetails.put("uploaderName", extractor.getUploaderName());
+        try {
+            playlistDetails.put("uploaderName", extractor.getUploaderName());
+        } catch (Exception e) {
+            playlistDetails.put("uploaderName", "Unknown");
+        }
         playlistDetails.put("uploaderAvatarUrl", extractor.getUploaderAvatarUrl());
         playlistDetails.put("uploaderUrl", extractor.getUploaderUrl());
         playlistDetails.put("streamCount", String.valueOf(extractor.getStreamCount()));
@@ -53,7 +58,7 @@ public class YoutubePlaylistExtractorImpl {
             itemMap.put("uploaderUrl", item.getUploaderUrl());
             itemMap.put("uploadDate", item.getTextualUploadDate());
             try {
-                itemMap.put("date", item.getUploadDate().offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+                itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
             } catch (NullPointerException ignore) {
                 itemMap.put("date", null);
             }
