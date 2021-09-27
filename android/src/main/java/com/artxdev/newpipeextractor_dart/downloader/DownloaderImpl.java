@@ -22,7 +22,7 @@ import okhttp3.ResponseBody;
 
 public class DownloaderImpl extends Downloader {
     private static final String USER_AGENT
-            = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0";
+            = "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0";
     public static final String YOUTUBE_RESTRICTED_MODE_COOKIE_KEY
             = "youtube_restricted_mode_key";
     public static final String RECAPTCHA_COOKIES_KEY = "recaptcha_cookies";

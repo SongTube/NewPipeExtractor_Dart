@@ -5,6 +5,7 @@ import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
 import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.playlist.PlaylistExtractor;
+import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 
@@ -13,15 +14,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
+import android.util.Log;
+
 public class YoutubePlaylistExtractorImpl {
 
-    static private PlaylistExtractor extractor;
+    static private YoutubePlaylistExtractor extractor;
 
     static public Map<String, String> getPlaylistDetails(String url) throws Exception {
-        extractor = YouTube.getPlaylistExtractor(url);
+        Log.d("EXTRACTOR: ", "getPlaylistDetails: " + url);
+        YoutubeParsingHelper.resetClientVersionAndKey();
+        YoutubeParsingHelper.setNumberGenerator(new Random(1));
+        extractor = (YoutubePlaylistExtractor) YouTube.getPlaylistExtractor(url);
         extractor.fetchPage();
         Map<String, String> playlistDetails = new HashMap<>();
         playlistDetails.put("name", extractor.getName());
@@ -32,8 +39,16 @@ public class YoutubePlaylistExtractorImpl {
         } catch (Exception e) {
             playlistDetails.put("uploaderName", "Unknown");
         }
-        playlistDetails.put("uploaderAvatarUrl", extractor.getUploaderAvatarUrl());
-        playlistDetails.put("uploaderUrl", extractor.getUploaderUrl());
+        try {
+            playlistDetails.put("uploaderAvatarUrl", extractor.getUploaderAvatarUrl());
+        } catch (Exception e) {
+            playlistDetails.put("uploaderAvatarUrl", null);
+        }
+        try {
+            playlistDetails.put("uploaderUrl", extractor.getUploaderUrl());
+        } catch (Exception e) {
+            playlistDetails.put("uploaderUrl", null);
+        }
         playlistDetails.put("streamCount", String.valueOf(extractor.getStreamCount()));
         playlistDetails.put("id", extractor.getId());
         playlistDetails.put("url", extractor.getUrl());
@@ -41,7 +56,7 @@ public class YoutubePlaylistExtractorImpl {
     }
 
     static public Map<Integer, Map<String, String>> getPlaylistStreams(String url) throws Exception {
-        extractor = YouTube.getPlaylistExtractor(url);
+        extractor = (YoutubePlaylistExtractor) YouTube.getPlaylistExtractor(url);
         extractor.fetchPage();
         List<StreamInfoItem> items = extractor.getInitialPage().getItems();
         return _fetchResultsFromItems(items);
