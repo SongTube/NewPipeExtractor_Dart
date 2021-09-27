@@ -4,6 +4,7 @@ import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
 
 import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.playlist.PlaylistExtractor;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 
@@ -17,11 +18,10 @@ import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
 public class YoutubePlaylistExtractorImpl {
 
-    static private YoutubePlaylistExtractor extractor;
+    static private PlaylistExtractor extractor;
 
     static public Map<String, String> getPlaylistDetails(String url) throws Exception {
-        extractor = (YoutubePlaylistExtractor) YouTube
-                .getPlaylistExtractor(url);
+        extractor = YouTube.getPlaylistExtractor(url);
         extractor.fetchPage();
         Map<String, String> playlistDetails = new HashMap<>();
         playlistDetails.put("name", extractor.getName());
@@ -41,8 +41,7 @@ public class YoutubePlaylistExtractorImpl {
     }
 
     static public Map<Integer, Map<String, String>> getPlaylistStreams(String url) throws Exception {
-        extractor = (YoutubePlaylistExtractor) YouTube
-                .getPlaylistExtractor(url);
+        extractor = YouTube.getPlaylistExtractor(url);
         extractor.fetchPage();
         List<StreamInfoItem> items = extractor.getInitialPage().getItems();
         return _fetchResultsFromItems(items);
