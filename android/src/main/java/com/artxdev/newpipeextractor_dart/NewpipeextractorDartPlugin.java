@@ -25,6 +25,8 @@ import com.artxdev.newpipeextractor_dart.youtube.YoutubeTrendingExtractorImpl;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.linkhandler.LinkHandler;
+import org.schabi.newpipe.extractor.localization.ContentCountry;
+import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeChannelLinkHandlerFactory;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 
@@ -33,6 +35,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,7 +68,9 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     context = flutterPluginBinding.getApplicationContext();
-    NewPipe.init(DownloaderImpl.getInstance());
+    NewPipe.init(DownloaderImpl.getInstance(),
+            Localization.fromLocale(Locale.getDefault()),
+            new ContentCountry(Locale.getDefault().getCountry()));
     final SharedPreferences preferences = PreferenceManager
             .getDefaultSharedPreferences(context);
     final String cookie = preferences.getString(PREFS_COOKIES_KEY, null);

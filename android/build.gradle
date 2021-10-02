@@ -51,7 +51,7 @@ android {
         //api "io.flutter:flutter_embedding_debug:1.0.0-d4453f601890ec682bbf8f5659b70f15cce1d67d"
         coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
         implementation 'androidx.annotation:annotation:1.1.0'
-        implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.21.9'
+        implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.21.10'
         implementation 'org.jsoup:jsoup:1.13.1'
         implementation 'org.mozilla:rhino:1.7.12'
         implementation 'com.github.spotbugs:spotbugs-annotations:4.0.2'
