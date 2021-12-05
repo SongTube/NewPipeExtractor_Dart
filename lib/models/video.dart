@@ -5,56 +5,12 @@ import 'package:newpipeextractor_dart/models/streamSegment.dart';
 import 'package:newpipeextractor_dart/models/streams/audioOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/streams/videoOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/streams/videoStream.dart';
+import 'package:newpipeextractor_dart/models/videoInfo.dart';
 
 class YoutubeVideo {
 
-  /// Video Id (ex: dQw4w9WgXcQ)
-  String? id;
-
-  /// Video full Url (ex: https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-  String? url;
-
-  /// Video Title
-  String? name;
-
-  /// Video uploader name (Channel name)
-  String? uploaderName;
-
-  /// Url to the uploader Channel
-  String? uploaderUrl;
-
-  /// Url to the uploader avatar image
-  String? uploaderAvatarUrl;
-
-  /// Video upload date
-  String? uploadDate;
-
-  /// Video description
-  String? description;
-
-  /// Video length (duration in ms)
-  int? length;
-
-  /// View Count
-  int? viewCount;
-
-  /// Like Count
-  int? likeCount;
-
-  /// Dislike Count
-  int? dislikeCount;
-
-  /// Video category
-  String? category;
-
-  /// Age limit (int)
-  int? ageLimit;
-
-  /// Video Tags
-  String? tags;
-
-  /// Video Thumbnail Url
-  String? thumbnailUrl;
+  /// Video Information
+  VideoInfo videoInfo;
 
   /// Video Only Streams
   List<VideoOnlyStream>? videoOnlyStreams;
@@ -69,22 +25,7 @@ class YoutubeVideo {
   List<StreamSegment>? segments;
 
   YoutubeVideo({
-    this.id,
-    this.url,
-    this.name,
-    this.uploaderName,
-    this.uploaderAvatarUrl,
-    this.uploaderUrl,
-    this.uploadDate,
-    this.description,
-    this.length,
-    this.viewCount,
-    this.likeCount,
-    this.dislikeCount,
-    this.category,
-    this.ageLimit,
-    this.tags,
-    this.thumbnailUrl,
+    required this.videoInfo,
     this.videoOnlyStreams,
     this.audioOnlyStreams,
     this.videoStreams,
@@ -95,15 +36,15 @@ class YoutubeVideo {
   /// allows saving or transporting it via Strings
   StreamInfoItem toStreamInfoItem() {
     return StreamInfoItem(
-      url,
-      id,
-      name,
-      uploaderName,
-      uploaderUrl,
-      uploadDate,
-      uploadDate,
-      length,
-      viewCount
+      videoInfo.url,
+      videoInfo.id,
+      videoInfo.name,
+      videoInfo.uploaderName,
+      videoInfo.uploaderUrl,
+      videoInfo.uploadDate,
+      videoInfo.uploadDate,
+      videoInfo.length,
+      videoInfo.viewCount
     );
   }
 
@@ -111,7 +52,7 @@ class YoutubeVideo {
   /// then, this function will retrieve those streams and return a new
   /// [YoutubeVideo] object
   Future<YoutubeVideo> get getStreams async =>
-    await VideoExtractor.getStream(url);
+    await VideoExtractor.getStream(videoInfo.url);
   
   /// Gets the best quality video only stream
   /// (By resolution, fps is not taken in consideration)

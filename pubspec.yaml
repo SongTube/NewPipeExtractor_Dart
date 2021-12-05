@@ -2,7 +2,6 @@ name: newpipeextractor_dart
 description: A new flutter plugin project.
 publish_to: none
 version: 0.0.1
-author: Artx
 homepage:
 
 environment:

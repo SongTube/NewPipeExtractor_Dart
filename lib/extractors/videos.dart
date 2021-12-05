@@ -5,6 +5,7 @@ import 'package:newpipeextractor_dart/models/streams/audioOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/video.dart';
 import 'package:newpipeextractor_dart/models/streams/videoOnlyStream.dart';
 import 'package:newpipeextractor_dart/models/streams/videoStream.dart';
+import 'package:newpipeextractor_dart/models/videoInfo.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
 import 'package:newpipeextractor_dart/utils/reCaptcha.dart';
 import 'package:newpipeextractor_dart/utils/streamsParser.dart';
@@ -60,21 +61,7 @@ class VideoExtractor {
       ));
     });
     return YoutubeVideo(
-      id: informationMap['id'],
-      url: informationMap['url'],
-      name: informationMap['name'],
-      uploaderName: informationMap['uploaderName'],
-      uploaderAvatarUrl: informationMap['uploaderAvatarUrl'],
-      uploaderUrl: informationMap['uploaderUrl'],
-      uploadDate: informationMap['uploadDate'],
-      description: informationMap['description'],
-      length: int.parse(informationMap['length']),
-      viewCount: int.parse(informationMap['viewCount']),
-      likeCount: int.parse(informationMap['likeCount']),
-      dislikeCount: int.parse(informationMap['dislikeCount']),
-      category: informationMap['category'],
-      ageLimit: int.parse(informationMap['ageLimit']),
-      thumbnailUrl: informationMap['thumbnailUrl'],
+      videoInfo: VideoInfo.fromMap(informationMap),
       videoOnlyStreams: videoOnlyStreams,
       audioOnlyStreams: audioOnlyStreams,
       videoStreams: videoStreams,
@@ -93,21 +80,7 @@ class VideoExtractor {
     // Check if we got reCaptcha needed response
     informationMap = await ReCaptchaPage.checkInfo(informationMap, task);
     return YoutubeVideo(
-      id: informationMap['id'],
-      url: informationMap['url'],
-      name: informationMap['name'],
-      uploaderName: informationMap['uploaderName'],
-      uploaderAvatarUrl: informationMap['uploaderAvatarUrl'],
-      uploaderUrl: informationMap['uploaderUrl'],
-      uploadDate: informationMap['uploadDate'],
-      description: informationMap['description'],
-      length: int.parse(informationMap['length']),
-      viewCount: int.parse(informationMap['viewCount']),
-      likeCount: int.parse(informationMap['likeCount']),
-      dislikeCount: int.parse(informationMap['dislikeCount']),
-      category: informationMap['category'],
-      ageLimit: int.parse(informationMap['ageLimit']),
-      thumbnailUrl: informationMap['thumbnailUrl']
+      videoInfo: VideoInfo.fromMap(informationMap),
     );
   }
 
