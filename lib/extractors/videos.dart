@@ -61,7 +61,7 @@ class VideoExtractor {
       ));
     });
     return YoutubeVideo(
-      videoInfo: VideoInfo.fromMap(informationMap),
+      videoInfo: VideoInfo.fromMap(Map<String, dynamic>.from(informationMap)),
       videoOnlyStreams: videoOnlyStreams,
       audioOnlyStreams: audioOnlyStreams,
       videoStreams: videoStreams,
@@ -80,7 +80,7 @@ class VideoExtractor {
     // Check if we got reCaptcha needed response
     informationMap = await ReCaptchaPage.checkInfo(informationMap, task);
     return YoutubeVideo(
-      videoInfo: VideoInfo.fromMap(informationMap),
+      videoInfo: VideoInfo.fromMap(Map<String, dynamic>.from(informationMap)),
     );
   }
 
