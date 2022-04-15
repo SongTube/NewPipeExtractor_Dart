@@ -7,6 +7,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.extractor.stream.StreamInfoItemsCollector;
 import org.schabi.newpipe.extractor.stream.StreamSegment;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 
@@ -153,7 +154,8 @@ public class StreamExtractorImpl {
     public static Map<Integer, Map<String, String>> getRelatedStreams(String url) throws Exception {
         StreamExtractor extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
-        List<StreamInfoItem> items = extractor.getRelatedStreams().getStreamInfoItemList();
+        StreamInfoItemsCollector collector = (StreamInfoItemsCollector) extractor.getRelatedItems();
+        List<StreamInfoItem> items = collector.getItems();
         Map<Integer, Map<String, String>> itemsMap = new HashMap<>();
         for (int i = 0; i < items.size(); i++) {
             StreamInfoItem item = items.get(i);
@@ -165,7 +167,6 @@ public class StreamExtractorImpl {
     public static Map<Integer, Map<String, String>> getStreamSegments(String url) throws Exception {
         StreamExtractor extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
-        List<StreamInfoItem> items = extractor.getRelatedStreams().getStreamInfoItemList();
         return fetchStreamSegments(extractor.getStreamSegments());
     }
 
