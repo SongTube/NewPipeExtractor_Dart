@@ -3,6 +3,8 @@ package com.artxdev.newpipeextractor_dart.youtube;
 import com.artxdev.newpipeextractor_dart.FetchData;
 import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
 
+import org.schabi.newpipe.extractor.InfoItem;
+import org.schabi.newpipe.extractor.MultiInfoItemsCollector;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
@@ -154,11 +156,11 @@ public class StreamExtractorImpl {
     public static Map<Integer, Map<String, String>> getRelatedStreams(String url) throws Exception {
         StreamExtractor extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
-        StreamInfoItemsCollector collector = (StreamInfoItemsCollector) extractor.getRelatedItems();
-        List<StreamInfoItem> items = collector.getItems();
+        MultiInfoItemsCollector collector = (MultiInfoItemsCollector) extractor.getRelatedItems();
+        List<InfoItem> items = collector.getItems();
         Map<Integer, Map<String, String>> itemsMap = new HashMap<>();
         for (int i = 0; i < items.size(); i++) {
-            StreamInfoItem item = items.get(i);
+            StreamInfoItem item = (StreamInfoItem) items.get(i);
             itemsMap.put(i, FetchData.fetchRelatedStream(item));
         }
         return itemsMap;
