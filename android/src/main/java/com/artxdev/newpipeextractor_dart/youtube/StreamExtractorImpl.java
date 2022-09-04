@@ -1,15 +1,13 @@
 package com.artxdev.newpipeextractor_dart.youtube;
 
 import com.artxdev.newpipeextractor_dart.FetchData;
-import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
 
 import org.schabi.newpipe.extractor.InfoItem;
-import org.schabi.newpipe.extractor.MultiInfoItemsCollector;
-import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.InfoItemExtractor;
+import org.schabi.newpipe.extractor.InfoItemsCollector;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
-import org.schabi.newpipe.extractor.stream.StreamInfoItemsCollector;
 import org.schabi.newpipe.extractor.stream.StreamSegment;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 
@@ -156,8 +154,8 @@ public class StreamExtractorImpl {
     public static Map<Integer, Map<String, String>> getRelatedStreams(String url) throws Exception {
         StreamExtractor extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
-        MultiInfoItemsCollector collector = (MultiInfoItemsCollector) extractor.getRelatedItems();
-        List<InfoItem> items = collector.getItems();
+        InfoItemsCollector<? extends InfoItem, ? extends InfoItemExtractor> collector = extractor.getRelatedItems();
+        List<InfoItem> items = (List<InfoItem>) collector.getItems();
         Map<Integer, Map<String, String>> itemsMap = new HashMap<>();
         for (int i = 0; i < items.size(); i++) {
             StreamInfoItem item = (StreamInfoItem) items.get(i);

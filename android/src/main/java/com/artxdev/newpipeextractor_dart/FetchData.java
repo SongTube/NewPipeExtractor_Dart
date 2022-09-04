@@ -85,7 +85,7 @@ public class FetchData {
 
     static public Map<String, String> fetchAudioStreamInfo(AudioStream stream) {
         Map<String, String> streamMap = new HashMap<>();
-        streamMap.put("torrentUrl", stream.getTorrentUrl());
+        streamMap.put("torrentUrl", stream.getUrl());
         streamMap.put("url", stream.getUrl());
         streamMap.put("averageBitrate", String.valueOf(stream.getAverageBitrate()));
         streamMap.put("formatName", stream.getFormat().name);
@@ -96,7 +96,7 @@ public class FetchData {
 
     static public Map<String, String> fetchVideoStreamInfo(VideoStream stream) {
         Map<String, String> streamMap = new HashMap<>();
-        streamMap.put("torrentUrl", stream.getTorrentUrl());
+        streamMap.put("torrentUrl", stream.getUrl());
         streamMap.put("url", stream.getUrl());
         streamMap.put("resolution", stream.getResolution());
         streamMap.put("formatName", stream.getFormat().name);

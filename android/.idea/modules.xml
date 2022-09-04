@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/newpipeextractor_dart.iml" filepath="$PROJECT_DIR$/.idea/modules/newpipeextractor_dart.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/newpipeextractor_dart.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/newpipeextractor_dart.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/newpipeextractor_dart.main.iml" filepath="$PROJECT_DIR$/.idea/modules/newpipeextractor_dart.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/newpipeextractor_dart.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/newpipeextractor_dart.unitTest.iml" />
     </modules>
   </component>
 </project>
