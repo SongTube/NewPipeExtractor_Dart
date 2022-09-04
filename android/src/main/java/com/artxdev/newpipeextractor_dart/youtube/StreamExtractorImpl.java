@@ -158,8 +158,10 @@ public class StreamExtractorImpl {
         List<InfoItem> items = (List<InfoItem>) collector.getItems();
         Map<Integer, Map<String, String>> itemsMap = new HashMap<>();
         for (int i = 0; i < items.size(); i++) {
-            StreamInfoItem item = (StreamInfoItem) items.get(i);
-            itemsMap.put(i, FetchData.fetchRelatedStream(item));
+            InfoItem item = items.get(i);
+            if (item instanceof StreamInfoItem) {
+                itemsMap.put(i, FetchData.fetchRelatedStream((StreamInfoItem) item));
+            }
         }
         return itemsMap;
     }
