@@ -15,7 +15,7 @@ buildscript {
 apply plugin: 'com.android.library'
 
 allprojects {
-    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
 
     repositories {
         google()
