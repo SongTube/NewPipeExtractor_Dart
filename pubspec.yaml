@@ -10,9 +10,9 @@ environment:
 dependencies:
     flutter:
         sdk: flutter
-    http: any
-    html: any
-    flutter_inappwebview: ^5.4.3+7
+    http: ^0.13.5
+    html: ^0.15.1
+    flutter_inappwebview: ^5.7.2+3
 
 dev_dependencies:
     flutter_test:
