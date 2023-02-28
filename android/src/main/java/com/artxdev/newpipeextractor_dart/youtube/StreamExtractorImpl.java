@@ -5,6 +5,8 @@ import com.artxdev.newpipeextractor_dart.FetchData;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.InfoItemExtractor;
 import org.schabi.newpipe.extractor.InfoItemsCollector;
+import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
+import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
@@ -151,19 +153,12 @@ public class StreamExtractorImpl {
         return videoStreamsMap;
     }
 
-    public static Map<Integer, Map<String, String>> getRelatedStreams(String url) throws Exception {
+    public static Map<String, Map<Integer, Map<String, String>>> getRelatedStreams(String url) throws Exception {
         StreamExtractor extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
         InfoItemsCollector<? extends InfoItem, ? extends InfoItemExtractor> collector = extractor.getRelatedItems();
         List<InfoItem> items = (List<InfoItem>) collector.getItems();
-        Map<Integer, Map<String, String>> itemsMap = new HashMap<>();
-        for (int i = 0; i < items.size(); i++) {
-            InfoItem item = items.get(i);
-            if (item instanceof StreamInfoItem) {
-                itemsMap.put(i, FetchData.fetchRelatedStream((StreamInfoItem) item));
-            }
-        }
-        return itemsMap;
+        return FetchData.fetchInfoItems(items);
     }
 
     public static Map<Integer, Map<String, String>> getStreamSegments(String url) throws Exception {

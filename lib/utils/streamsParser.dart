@@ -1,7 +1,46 @@
-import 'package:newpipeextractor_dart/models/infoItems/video.dart';
-import 'package:newpipeextractor_dart/models/streamSegment.dart';
+import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
 
 class StreamsParser {
+
+  /// Retrieves a list of different types of InfoItems from the method channel response map
+  static List<dynamic> parseInfoItemListFromMap(info, {required bool singleList}) {
+    if ((info as Map).containsKey("error")) {
+      print(info["error"]);
+      return [];
+    }
+    List<StreamInfoItem> listVideos = StreamsParser
+      .parseStreamListFromMap(info['streams']);
+    List<PlaylistInfoItem> listPlaylists = [];
+    info['playlists'].forEach((_, map) {
+      listPlaylists.add(PlaylistInfoItem(
+        map['url'],
+        map['name'],
+        map['uploaderName'],
+        map['thumbnailUrl'],
+        int.parse(map['streamCount'])
+      ));
+    });
+    List<ChannelInfoItem> listChannels = [];
+    info['channels'].forEach((_, map) {
+      listChannels.add(ChannelInfoItem(
+        map['url'], 
+        map['name'],
+        map['description'],
+        map['thumbnailUrl'],
+        int.parse(map['subscriberCount']),
+        int.parse(map['streamCount'])
+      ));
+    });
+    if (singleList) {
+      return <dynamic>[...listPlaylists, ...listVideos];
+    } else {
+      return [
+        listVideos,
+        listPlaylists,
+        listChannels
+      ];
+    }
+  }
 
   /// Retrieves a list of StreamInfoItem from the method channel response map
   static List<StreamInfoItem> parseStreamListFromMap(info) {

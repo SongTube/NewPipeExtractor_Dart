@@ -176,7 +176,7 @@ class VideoExtractor {
   }
 
   /// Retrieve related videos by URL
-  static Future<List<StreamInfoItem>> getRelatedStreams(String videoUrl) async {
+  static Future<List<dynamic>> getRelatedStreams(String videoUrl) async {
     if (videoUrl == null || StringChecker.hasWhiteSpace(videoUrl))
       throw BadUrlException("Url is null or contains white space");
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
@@ -185,7 +185,7 @@ class VideoExtractor {
     var info = await task();
     // Check if we got reCaptcha needed response
     info = await ReCaptchaPage.checkInfo(info, task);
-    return StreamsParser.parseStreamListFromMap(info);
+    return StreamsParser.parseInfoItemListFromMap(info, singleList: true);
   }
 
   /// Retrieves all stream segments from video URL

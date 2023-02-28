@@ -67,38 +67,7 @@ class SearchExtractor {
   }
 
   static List<dynamic> _parseSearchResults(info) {
-    if ((info as Map).containsKey("error")) {
-      print(info["error"]);
-      return [];
-    }
-    List<StreamInfoItem> listVideos = StreamsParser
-      .parseStreamListFromMap(info['streams']);
-    List<PlaylistInfoItem> listPlaylists = [];
-    info['playlists'].forEach((_, map) {
-      listPlaylists.add(PlaylistInfoItem(
-        map['url'],
-        map['name'],
-        map['uploaderName'],
-        map['thumbnailUrl'],
-        int.parse(map['streamCount'])
-      ));
-    });
-    List<ChannelInfoItem> listChannels = [];
-    info['channels'].forEach((_, map) {
-      listChannels.add(ChannelInfoItem(
-        map['url'], 
-        map['name'],
-        map['description'],
-        map['thumbnailUrl'],
-        int.parse(map['subscriberCount']),
-        int.parse(map['streamCount'])
-      ));
-    });
-    return [
-      listVideos,
-      listPlaylists,
-      listChannels
-    ];
+    return StreamsParser.parseInfoItemListFromMap(info, singleList: false);
   }
 
 }
