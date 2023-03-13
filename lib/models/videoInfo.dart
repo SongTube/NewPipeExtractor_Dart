@@ -1,3 +1,5 @@
+import 'package:newpipeextractor_dart/models/infoItems/video.dart';
+
 class VideoInfo {
   
   VideoInfo({
@@ -85,6 +87,21 @@ class VideoInfo {
       category: map.containsKey('category') ? map['category'] : null,
       ageLimit: map.containsKey('ageLimit') ? int.parse(map['ageLimit']) : null,
       thumbnailUrl: map.containsKey('thumbnailUrl') ? map['thumbnailUrl'] : null,
+    );
+  }
+
+  /// Generate a VideoInfo Item from StreamInfoItem
+  static VideoInfo fromStreamInfoItem(StreamInfoItem item) {
+    return VideoInfo(
+      id: item.id,
+      url: item.url,
+      name: item.name,
+      uploadDate: item.uploadDate,
+      uploaderUrl: item.uploaderUrl,
+      uploaderName: item.uploaderName,
+      length: Duration(seconds: item.duration!).inMilliseconds,
+      viewCount: item.viewCount,
+      thumbnailUrl: item.thumbnails?.hqdefault
     );
   }
 
