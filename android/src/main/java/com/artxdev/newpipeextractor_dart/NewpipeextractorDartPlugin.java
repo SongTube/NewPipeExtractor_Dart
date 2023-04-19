@@ -27,6 +27,7 @@ import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.linkhandler.LinkHandler;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelExtractor;
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeChannelLinkHandlerFactory;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 
@@ -63,6 +64,9 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
   private final YoutubeMusicExtractor musicExtractor
           = new YoutubeMusicExtractor();
 
+  private final YoutubeChannelExtractorImpl channelExtractor
+          = new YoutubeChannelExtractorImpl();
+
   private final String PREFS_COOKIES_KEY = "prefs_cookies_key";
 
   @Override
@@ -98,7 +102,7 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getChannel")) {
           String channelUrl = call.argument("channelUrl");
           try {
-            info[0] = YoutubeChannelExtractorImpl.getChannel(channelUrl);
+            info[0] = channelExtractor.getChannel(channelUrl);
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());
@@ -284,7 +288,17 @@ public class NewpipeextractorDartPlugin implements FlutterPlugin, MethodCallHand
         if (method.equals("getChannelUploads")) {
           String channelUrl = call.argument("channelUrl");
           try {
-            info[0] = YoutubeChannelExtractorImpl.getChannelUploads(channelUrl);
+            info[0] = channelExtractor.getChannelUploads(channelUrl);
+          } catch (Exception e) {
+            e.printStackTrace();
+            info[0].put("error", e.getMessage());
+          }
+        }
+
+        // Get next page of channel videos
+        if (method.equals("getChannelNextPage")) {
+          try {
+            info[0] = channelExtractor.getChannelNextPage();
           } catch (Exception e) {
             e.printStackTrace();
             info[0].put("error", e.getMessage());

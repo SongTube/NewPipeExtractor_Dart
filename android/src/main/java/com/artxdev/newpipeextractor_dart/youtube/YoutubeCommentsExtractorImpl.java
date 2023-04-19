@@ -29,7 +29,7 @@ public class YoutubeCommentsExtractorImpl {
             Map<String, String> commentMap = new HashMap<>();
             commentMap.put("commentId", comment.getCommentId());
             commentMap.put("author", comment.getUploaderName());
-            commentMap.put("commentText", comment.getCommentText());
+            commentMap.put("commentText", comment.getCommentText().getContent());
             commentMap.put("uploaderAvatarUrl", comment.getUploaderAvatarUrl());
             commentMap.put("uploadDate", comment.getTextualUploadDate());
             commentMap.put("uploaderUrl", comment.getUploaderUrl());

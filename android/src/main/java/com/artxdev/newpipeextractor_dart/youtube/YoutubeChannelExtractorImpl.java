@@ -2,7 +2,9 @@ package com.artxdev.newpipeextractor_dart.youtube;
 
 import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
 
+import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
@@ -16,8 +18,11 @@ import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
 public class YoutubeChannelExtractorImpl {
 
-    public static Map<String, String> getChannel(String url) throws Exception {
-        YoutubeChannelExtractor extractor;
+    private YoutubeChannelExtractor extractor;
+
+    private ListExtractor.InfoItemsPage<StreamInfoItem> currentPage;
+
+    public Map<String, String> getChannel(String url) throws Exception {
         extractor = (YoutubeChannelExtractor) YouTube
                 .getChannelExtractor(url);
         extractor.fetchPage();
@@ -33,12 +38,24 @@ public class YoutubeChannelExtractorImpl {
         return channelMap;
     }
 
-    public static Map<Integer, Map<String, String>> getChannelUploads(String url) throws Exception {
-        YoutubeChannelExtractor extractor;
-        extractor = (YoutubeChannelExtractor) YouTube
-                .getChannelExtractor(url);
+    public Map<Integer, Map<String, String>> getChannelUploads(String url) throws Exception {
         extractor.fetchPage();
-        List<StreamInfoItem> items = extractor.getInitialPage().getItems();
+        currentPage = extractor.getInitialPage();
+        List<StreamInfoItem> items = currentPage.getItems();
+        return parseData(items);
+    }
+
+    public Map<Integer, Map<String, String>> getChannelNextPage() throws Exception {
+        if (currentPage.hasNextPage()) {
+            currentPage = extractor.getPage(currentPage.getNextPage());
+            List<StreamInfoItem> items = currentPage.getItems();
+            return parseData(items);
+        } else {
+            return new HashMap<>();
+        }
+    }
+
+    public Map<Integer, Map<String, String>> parseData(List<StreamInfoItem> items) {
         Map<Integer, Map<String, String>> itemsMap = new HashMap<>();
         for (int i = 0; i < items.size(); i++) {
             StreamInfoItem item = items.get(i);

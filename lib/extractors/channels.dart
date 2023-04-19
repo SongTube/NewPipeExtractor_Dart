@@ -47,6 +47,15 @@ class ChannelExtractor {
     return StreamsParser.parseStreamListFromMap(info);
   }
  
+  /// Retrieve next page from channel uploads
+  static Future<List<StreamInfoItem>> getChannelNextUploads() async {
+    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod('getChannelNextPage');
+    var info = await task();
+    // Check if we got reCaptcha needed response
+    info = await ReCaptchaPage.checkInfo(info, task);
+    return StreamsParser.parseStreamListFromMap(info);
+  } 
+
   /// Retrieve high quality Channel Avatar URL
   static Future<String?> getAvatarUrl(String channelId) async {
     var url = 'https://www.youtube.com/channel/$channelId?hl=en';
