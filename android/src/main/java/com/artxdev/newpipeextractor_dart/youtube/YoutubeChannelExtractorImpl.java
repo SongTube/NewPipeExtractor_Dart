@@ -39,6 +39,8 @@ public class YoutubeChannelExtractorImpl {
     }
 
     public Map<Integer, Map<String, String>> getChannelUploads(String url) throws Exception {
+        extractor = (YoutubeChannelExtractor) YouTube
+                .getChannelExtractor(url);
         extractor.fetchPage();
         currentPage = extractor.getInitialPage();
         List<StreamInfoItem> items = currentPage.getItems();

@@ -1,3 +1,4 @@
+import 'package:newpipeextractor_dart/models/infoItems/channel.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 
 class VideoInfo {
@@ -103,6 +104,11 @@ class VideoInfo {
       viewCount: item.viewCount,
       thumbnailUrl: item.thumbnails?.hqdefault
     );
+  }
+
+  /// Generate a ChannelInfoItem from this video details
+  ChannelInfoItem getChannel() {
+    return ChannelInfoItem(uploaderUrl, uploaderName, '', uploaderAvatarUrl, null, -1);
   }
 
 }
