@@ -22,13 +22,13 @@ import android.util.Log;
 
 public class YoutubePlaylistExtractorImpl {
 
-    static private YoutubePlaylistExtractor extractor;
+    static private PlaylistExtractor extractor;
 
     static public Map<String, String> getPlaylistDetails(String url) throws Exception {
         Log.d("EXTRACTOR: ", "getPlaylistDetails: " + url);
         YoutubeParsingHelper.resetClientVersionAndKey();
         YoutubeParsingHelper.setNumberGenerator(new Random(1));
-        extractor = (YoutubePlaylistExtractor) YouTube.getPlaylistExtractor(url);
+        extractor = YouTube.getPlaylistExtractor(url);
         extractor.fetchPage();
         Map<String, String> playlistDetails = new HashMap<>();
         playlistDetails.put("name", extractor.getName());
@@ -56,7 +56,7 @@ public class YoutubePlaylistExtractorImpl {
     }
 
     static public Map<Integer, Map<String, String>> getPlaylistStreams(String url) throws Exception {
-        extractor = (YoutubePlaylistExtractor) YouTube.getPlaylistExtractor(url);
+        extractor = YouTube.getPlaylistExtractor(url);
         extractor.fetchPage();
         List<StreamInfoItem> items = extractor.getInitialPage().getItems();
         return _fetchResultsFromItems(items);
