@@ -10,8 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
+
+import android.os.Build;
 
 public class YoutubeTrendingExtractorImpl {
 
@@ -32,12 +35,12 @@ public class YoutubeTrendingExtractorImpl {
             itemMap.put("uploaderName", item.getUploaderName());
             itemMap.put("uploaderUrl", item.getUploaderUrl());
             itemMap.put("uploadDate", item.getTextualUploadDate());
-            try {
-                itemMap.put("date", item.getUploadDate().offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-            } catch (NullPointerException ignore) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+            } else {
                 itemMap.put("date", null);
             }
-            itemMap.put("thumbnailUrl", item.getThumbnailUrl());
+            itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
             itemMap.put("duration", String.valueOf(item.getDuration()));
             itemMap.put("viewCount", String.valueOf(item.getViewCount()));
             itemMap.put("url", item.getUrl());

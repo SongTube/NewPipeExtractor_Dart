@@ -1,5 +1,7 @@
 package com.artxdev.newpipeextractor_dart;
 
+import android.os.Build;
+
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeLinkHandler;
 
 import org.schabi.newpipe.extractor.InfoItem;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class FetchData {
 
@@ -44,7 +47,7 @@ public class FetchData {
         } catch (ParsingException ignored) {
         }
         try {
-            videoInformationMap.put("uploaderAvatarUrl", extractor.getUploaderAvatarUrl());
+            videoInformationMap.put("uploaderAvatarUrl", extractor.getUploaderAvatars().get(0).getUrl());
         } catch (ParsingException ignored) {
         }
         try {
@@ -84,7 +87,7 @@ public class FetchData {
         } catch (ParsingException ignored) {
         }
         try {
-            videoInformationMap.put("thumbnailUrl", extractor.getThumbnailUrl());
+            videoInformationMap.put("thumbnailUrl", extractor.getThumbnails().get(0).getUrl());
         } catch (ParsingException ignored) {
         }
         return videoInformationMap;
@@ -95,7 +98,7 @@ public class FetchData {
         streamMap.put("torrentUrl", stream.getUrl());
         streamMap.put("url", stream.getUrl());
         streamMap.put("averageBitrate", String.valueOf(stream.getAverageBitrate()));
-        streamMap.put("formatName", stream.getFormat().name);
+        streamMap.put("formatName", Objects.requireNonNull(stream.getFormat()).name);
         streamMap.put("formatSuffix", stream.getFormat().suffix);
         streamMap.put("formatMimeType", stream.getFormat().mimeType);
         return streamMap;
@@ -106,7 +109,7 @@ public class FetchData {
         streamMap.put("torrentUrl", stream.getUrl());
         streamMap.put("url", stream.getUrl());
         streamMap.put("resolution", stream.getResolution());
-        streamMap.put("formatName", stream.getFormat().name);
+        streamMap.put("formatName", Objects.requireNonNull(stream.getFormat()).name);
         streamMap.put("formatSuffix", stream.getFormat().suffix);
         streamMap.put("formatMimeType", stream.getFormat().mimeType);
         return streamMap;
@@ -118,7 +121,7 @@ public class FetchData {
         itemMap.put("uploaderName", item.getUploaderName());
         itemMap.put("url", item.getUrl());
         itemMap.put("id", YoutubeLinkHandler.getIdFromPlaylistUrl(item.getUrl()));
-        itemMap.put("thumbnailUrl", item.getThumbnailUrl());
+        itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
         itemMap.put("streamCount", String.valueOf(item.getStreamCount()));
         return itemMap;
     }
@@ -129,12 +132,12 @@ public class FetchData {
         itemMap.put("uploaderName", item.getUploaderName());
         itemMap.put("uploaderUrl", item.getUploaderUrl());
         itemMap.put("uploadDate", item.getTextualUploadDate());
-        try {
-            itemMap.put("date", item.getUploadDate().offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-        } catch (NullPointerException ignore) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+        } else {
             itemMap.put("date", null);
         }
-        itemMap.put("thumbnailUrl", item.getThumbnailUrl());
+        itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
         itemMap.put("duration", String.valueOf(item.getDuration()));
         itemMap.put("viewCount", String.valueOf(item.getViewCount()));
         itemMap.put("url", item.getUrl());
@@ -192,7 +195,7 @@ public class FetchData {
                 Map<String, String> itemMap = new HashMap<>();
                 ChannelInfoItem item = channelsList.get(i);
                 itemMap.put("name", item.getName());
-                itemMap.put("thumbnailUrl", item.getThumbnailUrl());
+                itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
                 itemMap.put("url", item.getUrl());
                 itemMap.put("id", YoutubeLinkHandler.getIdFromChannelUrl(item.getUrl()));
                 itemMap.put("description", item.getDescription());

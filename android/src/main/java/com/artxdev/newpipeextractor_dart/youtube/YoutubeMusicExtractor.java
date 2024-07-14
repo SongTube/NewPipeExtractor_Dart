@@ -19,6 +19,8 @@ import java.util.Map;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
+import android.os.Build;
+
 public class YoutubeMusicExtractor {
 
     private SearchExtractor extractor;
@@ -78,12 +80,12 @@ public class YoutubeMusicExtractor {
                 itemMap.put("uploaderName", item.getUploaderName());
                 itemMap.put("uploaderUrl", item.getUploaderUrl());
                 itemMap.put("uploadDate", item.getTextualUploadDate());
-                try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     itemMap.put("date", item.getUploadDate().offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-                } catch (NullPointerException ignore) {
+                } else {
                     itemMap.put("date", null);
                 }
-                itemMap.put("thumbnailUrl", item.getThumbnailUrl());
+                itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
                 itemMap.put("duration", String.valueOf(item.getDuration()));
                 itemMap.put("viewCount", String.valueOf(item.getViewCount()));
                 itemMap.put("url", item.getUrl());
@@ -100,7 +102,7 @@ public class YoutubeMusicExtractor {
                 Map<String, String> itemMap = new HashMap<>();
                 ChannelInfoItem item = channelsList.get(i);
                 itemMap.put("name", item.getName());
-                itemMap.put("thumbnailUrl", item.getThumbnailUrl());
+                itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
                 itemMap.put("url", item.getUrl());
                 itemMap.put("id", YoutubeLinkHandler.getIdFromChannelUrl(item.getUrl()));
                 itemMap.put("description", item.getDescription());
@@ -121,7 +123,7 @@ public class YoutubeMusicExtractor {
                 itemMap.put("uploaderName", item.getUploaderName());
                 itemMap.put("url", item.getUrl());
                 itemMap.put("id", YoutubeLinkHandler.getIdFromPlaylistUrl(item.getUrl()));
-                itemMap.put("thumbnailUrl", item.getThumbnailUrl());
+                itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
                 itemMap.put("streamCount", String.valueOf(item.getStreamCount()));
                 playlistResultsMap.put(i, itemMap);
             }

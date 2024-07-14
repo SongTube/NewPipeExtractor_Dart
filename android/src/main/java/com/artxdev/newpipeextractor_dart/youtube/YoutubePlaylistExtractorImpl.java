@@ -18,6 +18,7 @@ import java.util.Random;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
+import android.os.Build;
 import android.util.Log;
 
 public class YoutubePlaylistExtractorImpl {
@@ -26,21 +27,21 @@ public class YoutubePlaylistExtractorImpl {
 
     static public Map<String, String> getPlaylistDetails(String url) throws Exception {
         Log.d("EXTRACTOR: ", "getPlaylistDetails: " + url);
-        YoutubeParsingHelper.resetClientVersionAndKey();
+        YoutubeParsingHelper.resetClientVersion();
         YoutubeParsingHelper.setNumberGenerator(new Random(1));
         extractor = YouTube.getPlaylistExtractor(url);
         extractor.fetchPage();
         Map<String, String> playlistDetails = new HashMap<>();
         playlistDetails.put("name", extractor.getName());
-        playlistDetails.put("thumbnailUrl", extractor.getThumbnailUrl());
-        playlistDetails.put("bannerUrl", extractor.getBannerUrl());
+        playlistDetails.put("thumbnailUrl", extractor.getThumbnails().get(0).getUrl());
+        playlistDetails.put("bannerUrl", extractor.getBanners().get(0).getUrl());
         try {
             playlistDetails.put("uploaderName", extractor.getUploaderName());
         } catch (Exception e) {
             playlistDetails.put("uploaderName", "Unknown");
         }
         try {
-            playlistDetails.put("uploaderAvatarUrl", extractor.getUploaderAvatarUrl());
+            playlistDetails.put("uploaderAvatarUrl", extractor.getUploaderAvatars().get(0).getUrl());
         } catch (Exception e) {
             playlistDetails.put("uploaderAvatarUrl", null);
         }
@@ -71,12 +72,12 @@ public class YoutubePlaylistExtractorImpl {
             itemMap.put("uploaderName", item.getUploaderName());
             itemMap.put("uploaderUrl", item.getUploaderUrl());
             itemMap.put("uploadDate", item.getTextualUploadDate());
-            try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-            } catch (NullPointerException ignore) {
+            } else {
                 itemMap.put("date", null);
             }
-            itemMap.put("thumbnailUrl", item.getThumbnailUrl());
+            itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
             itemMap.put("duration", String.valueOf(item.getDuration()));
             itemMap.put("viewCount", String.valueOf(item.getViewCount()));
             itemMap.put("url", item.getUrl());
