@@ -12,4 +12,13 @@ class StreamThumbnail {
 
   String get maxresdefault => "https://img.youtube.com/vi/$id/maxresdefault.jpg";
 
+  List<String> toList() {
+    return [
+      sddefault,
+      mqdefault,
+      hqdefault,
+      maxresdefault
+    ];
+  }
+
 }

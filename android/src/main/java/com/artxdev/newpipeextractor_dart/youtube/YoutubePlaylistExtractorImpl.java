@@ -1,7 +1,9 @@
 package com.artxdev.newpipeextractor_dart.youtube;
 
 import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
+import com.google.gson.Gson;
 
+import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.playlist.PlaylistExtractor;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
@@ -33,17 +36,23 @@ public class YoutubePlaylistExtractorImpl {
         extractor.fetchPage();
         Map<String, String> playlistDetails = new HashMap<>();
         playlistDetails.put("name", extractor.getName());
-        playlistDetails.put("thumbnailUrl", extractor.getThumbnails().get(0).getUrl());
-        playlistDetails.put("bannerUrl", extractor.getBanners().get(0).getUrl());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            playlistDetails.put("thumbnails", new Gson().toJson(extractor.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            playlistDetails.put("banners", new Gson().toJson(extractor.getBanners().stream().map(Image::getUrl).collect(Collectors.toList())));
+        }
         try {
             playlistDetails.put("uploaderName", extractor.getUploaderName());
         } catch (Exception e) {
             playlistDetails.put("uploaderName", "Unknown");
         }
         try {
-            playlistDetails.put("uploaderAvatarUrl", extractor.getUploaderAvatars().get(0).getUrl());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                playlistDetails.put("uploaderAvatars", new Gson().toJson(extractor.getUploaderAvatars().stream().map(Image::getUrl).collect(Collectors.toList())));
+            }
         } catch (Exception e) {
-            playlistDetails.put("uploaderAvatarUrl", null);
+            playlistDetails.put("uploaderAvatars", null);
         }
         try {
             playlistDetails.put("uploaderUrl", extractor.getUploaderUrl());
@@ -72,12 +81,18 @@ public class YoutubePlaylistExtractorImpl {
             itemMap.put("uploaderName", item.getUploaderName());
             itemMap.put("uploaderUrl", item.getUploaderUrl());
             itemMap.put("uploadDate", item.getTextualUploadDate());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-            } else {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+                } else {
+                    itemMap.put("date", null);
+                }
+            } catch (NullPointerException ignore) {
                 itemMap.put("date", null);
             }
-            itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                itemMap.put("thumbnails", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+            }
             itemMap.put("duration", String.valueOf(item.getDuration()));
             itemMap.put("viewCount", String.valueOf(item.getViewCount()));
             itemMap.put("url", item.getUrl());

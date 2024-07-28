@@ -12,10 +12,10 @@ class YoutubeChannel {
   String? url;
 
   /// Channel avatar image Url
-  String? avatarUrl;
+  List<String>? avatars;
 
   /// Channel banner image Url
-  String? bannerUrl;
+  List<String>? banners;
 
   /// Channel description
   String? description;
@@ -30,8 +30,8 @@ class YoutubeChannel {
     this.id,
     this.name,
     this.url,
-    this.avatarUrl,
-    this.bannerUrl,
+    this.avatars,
+    this.banners,
     this.description,
     this.feedUrl,
     this.subscriberCount
@@ -44,7 +44,7 @@ class YoutubeChannel {
       url,
       name,
       description,
-      avatarUrl,
+      avatars,
       subscriberCount,
       0
     );

@@ -1,5 +1,6 @@
 package com.artxdev.newpipeextractor_dart.youtube;
 
+import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
@@ -16,10 +17,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
 import android.os.Build;
+
+import com.google.gson.Gson;
 
 public class YoutubeMusicExtractor {
 
@@ -80,12 +85,18 @@ public class YoutubeMusicExtractor {
                 itemMap.put("uploaderName", item.getUploaderName());
                 itemMap.put("uploaderUrl", item.getUploaderUrl());
                 itemMap.put("uploadDate", item.getTextualUploadDate());
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    itemMap.put("date", item.getUploadDate().offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-                } else {
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+                    } else {
+                        itemMap.put("date", null);
+                    }
+                } catch (NullPointerException ignore) {
                     itemMap.put("date", null);
                 }
-                itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    itemMap.put("thumbnails", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+                }
                 itemMap.put("duration", String.valueOf(item.getDuration()));
                 itemMap.put("viewCount", String.valueOf(item.getViewCount()));
                 itemMap.put("url", item.getUrl());
@@ -102,7 +113,9 @@ public class YoutubeMusicExtractor {
                 Map<String, String> itemMap = new HashMap<>();
                 ChannelInfoItem item = channelsList.get(i);
                 itemMap.put("name", item.getName());
-                itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    itemMap.put("thumbnails", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+                }
                 itemMap.put("url", item.getUrl());
                 itemMap.put("id", YoutubeLinkHandler.getIdFromChannelUrl(item.getUrl()));
                 itemMap.put("description", item.getDescription());
@@ -123,7 +136,9 @@ public class YoutubeMusicExtractor {
                 itemMap.put("uploaderName", item.getUploaderName());
                 itemMap.put("url", item.getUrl());
                 itemMap.put("id", YoutubeLinkHandler.getIdFromPlaylistUrl(item.getUrl()));
-                itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    itemMap.put("thumbnails", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+                }
                 itemMap.put("streamCount", String.valueOf(item.getStreamCount()));
                 playlistResultsMap.put(i, itemMap);
             }

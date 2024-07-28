@@ -1,7 +1,3 @@
-import 'package:newpipeextractor_dart/models/search.dart';
-import 'package:newpipeextractor_dart/models/infoItems/channel.dart';
-import 'package:newpipeextractor_dart/models/infoItems/playlist.dart';
-import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
 import 'package:newpipeextractor_dart/utils/reCaptcha.dart';
 import 'package:newpipeextractor_dart/utils/streamsParser.dart';

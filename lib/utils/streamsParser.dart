@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
 
 class StreamsParser {
@@ -16,7 +18,7 @@ class StreamsParser {
         map['url'],
         map['name'],
         map['uploaderName'],
-        map['thumbnailUrl'],
+        map.containsKey('thumbnails') ? List<String>.from(jsonDecode(map['thumbnails'])) : [],
         int.parse(map['streamCount'])
       ));
     });
@@ -26,7 +28,7 @@ class StreamsParser {
         map['url'], 
         map['name'],
         map['description'],
-        map['thumbnailUrl'],
+        map.containsKey('thumbnails') ? List<String>.from(jsonDecode(map['thumbnails'])) : [],
         int.parse(map['subscriberCount']),
         int.parse(map['streamCount'])
       ));
@@ -52,6 +54,7 @@ class StreamsParser {
         map['name'],
         map['uploaderName'],
         map['uploaderUrl'],
+        map.containsKey('uploaderAvatars') ? List<String>.from(jsonDecode(map['uploaderAvatars'])) : [],
         map['uploadDate'],
         map['date'],
         int.parse(map['duration']),

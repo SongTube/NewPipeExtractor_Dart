@@ -1,7 +1,9 @@
 package com.artxdev.newpipeextractor_dart.youtube;
 
 import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
+import com.google.gson.Gson;
 
+import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.Page;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
@@ -32,10 +35,14 @@ public class YoutubeChannelExtractorImpl {
         extractor = (YoutubeChannelExtractor) YouTube
                 .getChannelExtractor(url);
         extractor.fetchPage();
-        Map<String, String> channelMap = new HashMap<String, String>();
+        Map<String, String> channelMap = new HashMap();
         channelMap.put("url", extractor.getUrl());
-        channelMap.put("avatarUrl", extractor.getAvatars().get(0).getUrl());
-        channelMap.put("bannerUrl", extractor.getBanners().get(0).getUrl());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            channelMap.put("avatars", new Gson().toJson(extractor.getAvatars().stream().map(Image::getUrl).collect(Collectors.toList())));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            channelMap.put("banners", new Gson().toJson(extractor.getBanners().stream().map(Image::getUrl).collect(Collectors.toList())));
+        }
         channelMap.put("description", extractor.getDescription());
         channelMap.put("feedUrl", extractor.getFeedUrl());
         channelMap.put("id", extractor.getId());
@@ -48,7 +55,8 @@ public class YoutubeChannelExtractorImpl {
         extractor = (YoutubeChannelExtractor) YouTube
                 .getChannelExtractor(url);
         extractor.fetchPage();
-        feedExtractor = YouTube.getFeedExtractor(extractor.getFeedUrl());
+        feedExtractor = YouTube.getFeedExtractor(extractor.getUrl());
+        feedExtractor.fetchPage();
         currentPage = feedExtractor.getInitialPage();
         List<StreamInfoItem> items = currentPage.getItems();
         return parseData(items);
@@ -73,12 +81,18 @@ public class YoutubeChannelExtractorImpl {
             itemMap.put("uploaderName", item.getUploaderName());
             itemMap.put("uploaderUrl", item.getUploaderUrl());
             itemMap.put("uploadDate", item.getTextualUploadDate());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-            } else {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+                } else {
+                    itemMap.put("date", null);
+                }
+            } catch (NullPointerException ignore) {
                 itemMap.put("date", null);
             }
-            itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                itemMap.put("thumbnailUrl", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+            }
             itemMap.put("duration", String.valueOf(item.getDuration()));
             itemMap.put("viewCount", String.valueOf(item.getViewCount()));
             itemMap.put("url", item.getUrl());

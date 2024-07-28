@@ -4,7 +4,7 @@ version '1.0'
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -19,7 +19,7 @@ allprojects {
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         // Comment this if you're building Release, this is for Android Studio indexing
         // maven {
@@ -30,7 +30,7 @@ allprojects {
 
 android {
 
-    compileSdkVersion 32
+    compileSdkVersion 34
 
     defaultConfig {
         minSdkVersion 22
@@ -51,10 +51,12 @@ android {
         //api "io.flutter:flutter_embedding_debug:1.0.0-d4453f601890ec682bbf8f5659b70f15cce1d67d"
         coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
         implementation 'androidx.annotation:annotation:1.1.0'
-        implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.24.1'
+        implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.24.2'
         implementation 'org.jsoup:jsoup:1.13.1'
         implementation 'org.mozilla:rhino:1.7.12'
-        implementation 'com.github.spotbugs:spotbugs-annotations:4.0.2'
+        implementation ('com.github.spotbugs:spotbugs-annotations:4.8.3'){
+            force = true
+        }
         implementation 'org.nibor.autolink:autolink:0.10.0'
         implementation 'junit:junit:4.13.1'
         implementation "com.squareup.okhttp3:okhttp:3.12.13"

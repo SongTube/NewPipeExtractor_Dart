@@ -1,6 +1,6 @@
+import 'dart:convert';
+
 import 'package:newpipeextractor_dart/exceptions/badUrlException.dart';
-import 'package:newpipeextractor_dart/models/channel.dart';
-import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
 import 'package:newpipeextractor_dart/utils/httpClient.dart';
 import 'package:newpipeextractor_dart/utils/reCaptcha.dart';
@@ -26,8 +26,8 @@ class ChannelExtractor {
       id: channel['id'],
       name: channel['name'],
       url: channel['url'],
-      avatarUrl: channel['avatarUrl'],
-      bannerUrl: channel['bannerUrl'],
+      avatars: List<String>.from(jsonDecode(channel['avatars'])),
+      banners: List<String>.from(jsonDecode(channel['banners'])),
       description: channel['description'],
       feedUrl: channel['feedUrl'],
       subscriberCount: int.parse(channel['subscriberCount'])
@@ -36,7 +36,7 @@ class ChannelExtractor {
 
   /// Retrieve uploads from a Channel URL
   static Future<List<StreamInfoItem>> getChannelUploads(String url) async {
-    if (url == null || StringChecker.hasWhiteSpace(url))
+    if (StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
     Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
       'getChannelUploads', { "channelUrl": url }

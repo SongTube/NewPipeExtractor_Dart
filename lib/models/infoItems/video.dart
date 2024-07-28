@@ -23,6 +23,9 @@ class StreamInfoItem {
   /// Video uploader channel url
   final String? uploaderUrl;
 
+  /// Video uploader avatars
+  final List<String>? uploaderAvatars;
+
   /// Video date
   final String? uploadDate;
 
@@ -41,6 +44,7 @@ class StreamInfoItem {
     this.name,
     this.uploaderName,
     this.uploaderUrl,
+    this.uploaderAvatars,
     this.uploadDate,
     this.date,
     this.duration,
@@ -72,6 +76,7 @@ class StreamInfoItem {
       'name': name,
       'uploaderName': uploaderName,
       'uploaderUrl': uploaderUrl,
+      'uploaderAvatars': uploaderAvatars,
       'uploadDate': uploadDate,
       'date': date,
       'duration': duration.toString(),
@@ -87,6 +92,7 @@ class StreamInfoItem {
       map['name'],
       map['uploaderName'],
       map['uploaderUrl'],
+      List<String>.from(map['uploaderAvatars']),
       map['uploadDate'],
       map['date'],
       int.parse(map['duration']),
@@ -109,7 +115,7 @@ class StreamInfoItem {
 
   /// Transform a list of StreamInfoItem into a simple json String
   static String listToJson(List<StreamInfoItem> list) {
-    List<Map<String, String?>> x = list
+    List<Map<String, dynamic>> x = list
       .map((e) => 
         {
           'url': e.url,
@@ -117,6 +123,7 @@ class StreamInfoItem {
           'name': e.name,
           'uploaderName': e.uploaderName,
           'uploaderUrl': e.uploaderUrl,
+          'uploaderAvatars': e.uploaderAvatars,
           'uploadDate': e.uploadDate,
           'date': e.date,
           'duration': e.duration.toString(),

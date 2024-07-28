@@ -15,7 +15,7 @@ class PlaylistInfoItem {
   final String? uploaderName;
 
   /// Playlist thumbnail url
-  final String? thumbnailUrl;
+  final List<String>? thumbnails;
 
   /// Playlist videos count
   final int streamCount;
@@ -24,7 +24,7 @@ class PlaylistInfoItem {
     this.url,
     this.name,
     this.uploaderName,
-    this.thumbnailUrl,
+    this.thumbnails,
     this.streamCount
   );
 
@@ -40,7 +40,7 @@ class PlaylistInfoItem {
       'url': url,
       'name': name,
       'uploaderName': uploaderName,
-      'thumbnailUrl': thumbnailUrl,
+      'thumbnails': thumbnails,
       'streamCount': streamCount.toString()
     };
   }
@@ -51,7 +51,7 @@ class PlaylistInfoItem {
       map['url'],
       map['name'],
       map['uploaderName'],
-      map['thumbnailUrl'],
+      map['thumbnails'],
       int.parse(map['streamCount'])
     );
   }
@@ -77,7 +77,7 @@ class PlaylistInfoItem {
           'url': e.url,
           'name': e.name,
           'uploaderName': e.uploaderName,
-          'thumbnailUrl': e.thumbnailUrl,
+          'thumbnails': e.thumbnails,
           'streamCount': e.streamCount.toString()
         }
       )

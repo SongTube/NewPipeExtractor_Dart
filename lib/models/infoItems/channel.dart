@@ -15,7 +15,7 @@ class ChannelInfoItem {
   final String? description;
 
   /// Channel avatar url
-  final String? thumbnailUrl;
+  final List<String>? thumbnails;
 
   /// Channel subscriber count
   final int? subscriberCount;
@@ -27,7 +27,7 @@ class ChannelInfoItem {
     this.url,
     this.name,
     this.description,
-    this.thumbnailUrl,
+    this.thumbnails,
     this.subscriberCount,
     this.streamCount
   );
@@ -44,7 +44,7 @@ class ChannelInfoItem {
       'url': url,
       'name': name,
       'description': description,
-      'thumbnailUrl': thumbnailUrl,
+      'thumbnailUrl': thumbnails,
       'subscriberCount': subscriberCount.toString(),
       'streamCount': streamCount.toString()
     };
@@ -83,7 +83,7 @@ class ChannelInfoItem {
           'url': e.url,
           'name': e.name,
           'description': e.description,
-          'thumbnailUrl': e.thumbnailUrl,
+          'thumbnailUrl': e.thumbnails,
           'subscriberCount': e.subscriberCount.toString(),
           'streamCount': e.streamCount.toString()
         }

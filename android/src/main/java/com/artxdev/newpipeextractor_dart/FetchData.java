@@ -3,7 +3,9 @@ package com.artxdev.newpipeextractor_dart;
 import android.os.Build;
 
 import com.artxdev.newpipeextractor_dart.youtube.YoutubeLinkHandler;
+import com.google.gson.Gson;
 
+import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
@@ -21,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class FetchData {
 
@@ -47,7 +50,9 @@ public class FetchData {
         } catch (ParsingException ignored) {
         }
         try {
-            videoInformationMap.put("uploaderAvatarUrl", extractor.getUploaderAvatars().get(0).getUrl());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                videoInformationMap.put("uploaderAvatars", new Gson().toJson(extractor.getUploaderAvatars().stream().map(Image::getUrl).collect(Collectors.toList())));
+            }
         } catch (ParsingException ignored) {
         }
         try {
@@ -87,7 +92,9 @@ public class FetchData {
         } catch (ParsingException ignored) {
         }
         try {
-            videoInformationMap.put("thumbnailUrl", extractor.getThumbnails().get(0).getUrl());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                videoInformationMap.put("thumbnails", new Gson().toJson(extractor.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+            }
         } catch (ParsingException ignored) {
         }
         return videoInformationMap;
@@ -95,8 +102,8 @@ public class FetchData {
 
     static public Map<String, String> fetchAudioStreamInfo(AudioStream stream) {
         Map<String, String> streamMap = new HashMap<>();
-        streamMap.put("torrentUrl", stream.getUrl());
-        streamMap.put("url", stream.getUrl());
+        streamMap.put("torrentUrl", stream.getContent());
+        streamMap.put("url", stream.getContent());
         streamMap.put("averageBitrate", String.valueOf(stream.getAverageBitrate()));
         streamMap.put("formatName", Objects.requireNonNull(stream.getFormat()).name);
         streamMap.put("formatSuffix", stream.getFormat().suffix);
@@ -106,8 +113,8 @@ public class FetchData {
 
     static public Map<String, String> fetchVideoStreamInfo(VideoStream stream) {
         Map<String, String> streamMap = new HashMap<>();
-        streamMap.put("torrentUrl", stream.getUrl());
-        streamMap.put("url", stream.getUrl());
+        streamMap.put("torrentUrl", stream.getContent());
+        streamMap.put("url", stream.getContent());
         streamMap.put("resolution", stream.getResolution());
         streamMap.put("formatName", Objects.requireNonNull(stream.getFormat()).name);
         streamMap.put("formatSuffix", stream.getFormat().suffix);
@@ -121,7 +128,9 @@ public class FetchData {
         itemMap.put("uploaderName", item.getUploaderName());
         itemMap.put("url", item.getUrl());
         itemMap.put("id", YoutubeLinkHandler.getIdFromPlaylistUrl(item.getUrl()));
-        itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            itemMap.put("thumbnails", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+        }
         itemMap.put("streamCount", String.valueOf(item.getStreamCount()));
         return itemMap;
     }
@@ -132,12 +141,21 @@ public class FetchData {
         itemMap.put("uploaderName", item.getUploaderName());
         itemMap.put("uploaderUrl", item.getUploaderUrl());
         itemMap.put("uploadDate", item.getTextualUploadDate());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-        } else {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+            } else {
+                itemMap.put("date", null);
+            }
+        } catch (NullPointerException ignore) {
             itemMap.put("date", null);
         }
-        itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            itemMap.put("thumbnails", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            itemMap.put("uploaderAvatars", new Gson().toJson(item.getUploaderAvatars().stream().map(Image::getUrl).collect(Collectors.toList())));
+        }
         itemMap.put("duration", String.valueOf(item.getDuration()));
         itemMap.put("viewCount", String.valueOf(item.getViewCount()));
         itemMap.put("url", item.getUrl());
@@ -195,7 +213,9 @@ public class FetchData {
                 Map<String, String> itemMap = new HashMap<>();
                 ChannelInfoItem item = channelsList.get(i);
                 itemMap.put("name", item.getName());
-                itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    itemMap.put("thumbnails", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+                }
                 itemMap.put("url", item.getUrl());
                 itemMap.put("id", YoutubeLinkHandler.getIdFromChannelUrl(item.getUrl()));
                 itemMap.put("description", item.getDescription());

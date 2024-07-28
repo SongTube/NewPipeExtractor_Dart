@@ -10,7 +10,7 @@ class YoutubeComment {
   String? uploadDate;
 
   /// Author avatar image Url
-  String? uploaderAvatarUrl;
+  List<String>? uploaderAvatars;
 
   /// Author channel url
   String? uploaderUrl;
@@ -31,7 +31,7 @@ class YoutubeComment {
     this.author,
     this.commentText,
     this.uploadDate,
-    this.uploaderAvatarUrl,
+    this.uploaderAvatars,
     this.uploaderUrl,
     this.commentId,
     this.likeCount,

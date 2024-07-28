@@ -41,6 +41,7 @@ class YoutubeVideo {
       videoInfo.name,
       videoInfo.uploaderName,
       videoInfo.uploaderUrl,
+      videoInfo.uploaderAvatars,
       videoInfo.uploadDate,
       videoInfo.uploadDate,
       videoInfo.length,

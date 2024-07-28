@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:newpipeextractor_dart/exceptions/badUrlException.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
 import 'package:newpipeextractor_dart/models/playlist.dart';
@@ -23,10 +25,10 @@ class PlaylistExtractor {
       info['name'],
       info['url'],
       info['uploaderName'],
-      info['uploaderAvatarUrl'],
+      List<String>.from(jsonDecode(info['uploaderAvatars'])),
       info['uploaderUrl'],
-      info['bannerUrl'],
-      info['thumbnailUrl'],
+      List<String>.from(jsonDecode(info['banners'])),
+      List<String>.from(jsonDecode(info['thumbnails'])),
       int.parse(info['streamCount'])
     );
   }

@@ -6,7 +6,7 @@ class YoutubeId {
 
   /// Get ID from any Stream URL, return [null] on failure
   static Future<String?> getIdFromStreamUrl(String url) async {
-    if (url == null || StringChecker.hasWhiteSpace(url))
+    if (StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
     var id = await NewPipeExtractorDart.extractorChannel.invokeMethod(
       'getIdFromStreamUrl', { "streamUrl": url }
@@ -16,7 +16,7 @@ class YoutubeId {
 
   /// Get ID from any Playlist URL, return [null] on failure
   static Future<String?> getIdFromPlaylistUrl(String url) async {
-    if (url == null || StringChecker.hasWhiteSpace(url))
+    if (StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
     var id = await NewPipeExtractorDart.extractorChannel.invokeMethod(
       'getIdFromPlaylistUrl', { "playlistUrl": url }
@@ -26,7 +26,7 @@ class YoutubeId {
 
   /// Get ID from any Channel URL, return [null] on failure
   static Future<String?> getIdFromChannelUrl(String url) async {
-    if (url == null || StringChecker.hasWhiteSpace(url))
+    if (StringChecker.hasWhiteSpace(url))
       throw BadUrlException("Url is null or contains white space");
     var id = await NewPipeExtractorDart.extractorChannel.invokeMethod(
       'getIdFromChannelUrl', { "channelUrl": url }

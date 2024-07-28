@@ -9,7 +9,7 @@ class VideoInfo {
     this.name,
     this.uploaderName,
     this.uploaderUrl,
-    this.uploaderAvatarUrl,
+    this.uploaderAvatars,
     this.uploadDate,
     this.description,
     this.length,
@@ -19,7 +19,7 @@ class VideoInfo {
     this.category,
     this.ageLimit,
     this.tags,
-    this.thumbnailUrl
+    this.thumbnails
   });
 
   /// Video Id (ex: dQw4w9WgXcQ)
@@ -38,7 +38,7 @@ class VideoInfo {
   String? uploaderUrl;
 
   /// Url to the uploader avatar image
-  String? uploaderAvatarUrl;
+  List<String>? uploaderAvatars;
 
   /// Video upload date
   String? uploadDate;
@@ -68,7 +68,7 @@ class VideoInfo {
   String? tags;
 
   /// Video Thumbnail Url
-  String? thumbnailUrl;
+  List<String>? thumbnails;
 
   /// Retrieve a new [VideoInfo] object from Map
   static VideoInfo fromMap(Map<String, dynamic> map) {
@@ -77,7 +77,7 @@ class VideoInfo {
       url: map.containsKey('url') ? map['url'] : null,
       name: map.containsKey('name') ? map['name'] : null,
       uploaderName: map.containsKey('uploaderName') ? map['uploaderName'] : null,
-      uploaderAvatarUrl: map.containsKey('uploaderAvatarUrl') ? map['uploaderAvatarUrl'] : null,
+      uploaderAvatars: map.containsKey('uploaderAvatars') ? List<String>.from(map['uploaderAvatars']) : null,
       uploaderUrl: map.containsKey('uploaderUrl') ? map['uploaderUrl'] : null,
       uploadDate: map.containsKey('uploadDate') ? map['uploadDate'] : null,
       description: map.containsKey('description') ? map['description']: null,
@@ -87,7 +87,7 @@ class VideoInfo {
       dislikeCount: map.containsKey('dislikeCount') ? int.parse(map['dislikeCount']) : null,
       category: map.containsKey('category') ? map['category'] : null,
       ageLimit: map.containsKey('ageLimit') ? int.parse(map['ageLimit']) : null,
-      thumbnailUrl: map.containsKey('thumbnailUrl') ? map['thumbnailUrl'] : null,
+      thumbnails: map.containsKey('thumbnails') ? List<String>.from(map['thumbnails']) : null,
     );
   }
 
@@ -102,13 +102,18 @@ class VideoInfo {
       uploaderName: item.uploaderName,
       length: Duration(seconds: item.duration!).inMilliseconds,
       viewCount: item.viewCount,
-      thumbnailUrl: item.thumbnails?.hqdefault
+      thumbnails: [
+        item.thumbnails!.sddefault,
+        item.thumbnails!.mqdefault,
+        item.thumbnails!.hqdefault,
+        item.thumbnails!.maxresdefault,
+      ]
     );
   }
 
   /// Generate a ChannelInfoItem from this video details
   ChannelInfoItem getChannel() {
-    return ChannelInfoItem(uploaderUrl, uploaderName, '', uploaderAvatarUrl, null, -1);
+    return ChannelInfoItem(uploaderUrl, uploaderName, '', uploaderAvatars, null, -1);
   }
 
 }

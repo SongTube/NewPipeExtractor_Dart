@@ -1,5 +1,6 @@
 package com.artxdev.newpipeextractor_dart.youtube;
 
+import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeTrendingExtractor;
@@ -11,10 +12,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
 import android.os.Build;
+
+import com.google.gson.Gson;
 
 public class YoutubeTrendingExtractorImpl {
 
@@ -35,12 +39,21 @@ public class YoutubeTrendingExtractorImpl {
             itemMap.put("uploaderName", item.getUploaderName());
             itemMap.put("uploaderUrl", item.getUploaderUrl());
             itemMap.put("uploadDate", item.getTextualUploadDate());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-            } else {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
+                } else {
+                    itemMap.put("date", null);
+                }
+            } catch (NullPointerException ignore) {
                 itemMap.put("date", null);
             }
-            itemMap.put("thumbnailUrl", item.getThumbnails().get(0).getUrl());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                itemMap.put("uploaderAvatars", new Gson().toJson(item.getUploaderAvatars().stream().map(Image::getUrl).collect(Collectors.toList())));
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                itemMap.put("thumbnails", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
+            }
             itemMap.put("duration", String.valueOf(item.getDuration()));
             itemMap.put("viewCount", String.valueOf(item.getViewCount()));
             itemMap.put("url", item.getUrl());

@@ -21,16 +21,16 @@ class YoutubePlaylist {
   String? uploaderName;
 
   /// Playlist author avatar url
-  String? uploaderAvatarUrl;
+  List<String>? uploaderAvatars;
 
   /// Playlist channel url
   String? uploaderUrl;
 
   /// Playlist banner url
-  String? bannerUrl;
+  List<String>? banners;
 
   /// Playlist thumbnail url
-  String? thumbnailUrl;
+  List<String>? thumbnails;
 
   /// Playlist videos ammount
   int streamCount;
@@ -43,10 +43,10 @@ class YoutubePlaylist {
     this.name,
     this.url,
     this.uploaderName,
-    this.uploaderAvatarUrl,
+    this.uploaderAvatars,
     this.uploaderUrl,
-    this.bannerUrl,
-    this.thumbnailUrl,
+    this.banners,
+    this.thumbnails,
     this.streamCount,
     {this.streams}
   );
@@ -58,7 +58,7 @@ class YoutubePlaylist {
       url,
       name,
       uploaderName,
-      thumbnailUrl,
+      thumbnails,
       streamCount
     );
   }
@@ -74,10 +74,10 @@ class YoutubePlaylist {
     String? name,
     String? url,
     String? uploaderName,
-    String? uploaderAvatarUrl,
+    List<String>? uploaderAvatarUrl,
     String? uploaderUrl,
-    String? bannerUrl,
-    String? thumbnailUrl,
+    List<String>? banners,
+    List<String>? thumbnails,
     int? streamCount,
     List<StreamInfoItem>? streams,
   }) {
@@ -86,10 +86,10 @@ class YoutubePlaylist {
       name ?? this.name,
       url ?? this.url,
       uploaderName ?? this.uploaderName,
-      uploaderAvatarUrl ?? this.uploaderAvatarUrl,
+      uploaderAvatarUrl ?? this.uploaderAvatars,
       uploaderUrl ?? this.uploaderUrl,
-      bannerUrl ?? this.bannerUrl,
-      thumbnailUrl ?? this.thumbnailUrl,
+      banners ?? this.banners,
+      thumbnails ?? this.thumbnails,
       streamCount ?? this.streamCount,
       streams: streams ?? this.streams,
     );
@@ -101,12 +101,12 @@ class YoutubePlaylist {
       'name': name,
       'url': url,
       'uploaderName': uploaderName,
-      'uploaderAvatarUrl': uploaderAvatarUrl,
+      'uploaderAvatars': uploaderAvatars,
       'uploaderUrl': uploaderUrl,
-      'bannerUrl': bannerUrl,
-      'thumbnailUrl': thumbnailUrl,
+      'banners': banners,
+      'thumbnails': thumbnails,
       'streamCount': streamCount,
-      'streams': streams == null ? [] : streams!.map((x) => x?.toMap()).toList(),
+      'streams': streams == null ? [] : streams!.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -116,10 +116,10 @@ class YoutubePlaylist {
       map['name'] != null ? map['name'] as String : null,
       map['url'] != null ? map['url'] as String : null,
       map['uploaderName'] != null ? map['uploaderName'] as String : null,
-      map['uploaderAvatarUrl'] != null ? map['uploaderAvatarUrl'] as String : null,
+      map['uploaderAvatars'] != null ?  List<String>.from(map['uploaderAvatars']) : null,
       map['uploaderUrl'] != null ? map['uploaderUrl'] as String : null,
-      map['bannerUrl'] != null ? map['bannerUrl'] as String : null,
-      map['thumbnailUrl'] != null ? map['thumbnailUrl'] as String : null,
+      map['banners'] != null ?  List<String>.from(map['banners']) : null,
+      map['thumbnails'] != null ?  List<String>.from(map['thumbnails']) : null,
       map['streamCount'] as int,
       streams: map['streams'] != null ? List<StreamInfoItem>.from((map['streams']).map<StreamInfoItem?>((x) => StreamInfoItem.fromMap(x as Map<String,dynamic>),),) : [],
     );
@@ -131,7 +131,7 @@ class YoutubePlaylist {
 
   @override
   String toString() {
-    return 'YoutubePlaylist(id: $id, name: $name, url: $url, uploaderName: $uploaderName, uploaderAvatarUrl: $uploaderAvatarUrl, uploaderUrl: $uploaderUrl, bannerUrl: $bannerUrl, thumbnailUrl: $thumbnailUrl, streamCount: $streamCount, streams: $streams)';
+    return 'YoutubePlaylist(id: $id, name: $name, url: $url, uploaderName: $uploaderName, uploaderAvatarUrl: $uploaderAvatars, uploaderUrl: $uploaderUrl, banners: $banners, thumbnails: $thumbnails, streamCount: $streamCount, streams: $streams)';
   }
 
   @override
@@ -143,10 +143,10 @@ class YoutubePlaylist {
       other.name == name &&
       other.url == url &&
       other.uploaderName == uploaderName &&
-      other.uploaderAvatarUrl == uploaderAvatarUrl &&
+      other.uploaderAvatars == uploaderAvatars &&
       other.uploaderUrl == uploaderUrl &&
-      other.bannerUrl == bannerUrl &&
-      other.thumbnailUrl == thumbnailUrl &&
+      other.banners == banners &&
+      other.thumbnails == thumbnails &&
       other.streamCount == streamCount &&
       listEquals(other.streams, streams);
   }
@@ -157,10 +157,10 @@ class YoutubePlaylist {
       name.hashCode ^
       url.hashCode ^
       uploaderName.hashCode ^
-      uploaderAvatarUrl.hashCode ^
+      uploaderAvatars.hashCode ^
       uploaderUrl.hashCode ^
-      bannerUrl.hashCode ^
-      thumbnailUrl.hashCode ^
+      banners.hashCode ^
+      thumbnails.hashCode ^
       streamCount.hashCode ^
       streams.hashCode;
   }
