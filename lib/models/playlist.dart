@@ -86,7 +86,7 @@ class YoutubePlaylist {
       name ?? this.name,
       url ?? this.url,
       uploaderName ?? this.uploaderName,
-      uploaderAvatarUrl ?? this.uploaderAvatars,
+      uploaderAvatarUrl ?? uploaderAvatars,
       uploaderUrl ?? this.uploaderUrl,
       banners ?? this.banners,
       thumbnails ?? this.thumbnails,

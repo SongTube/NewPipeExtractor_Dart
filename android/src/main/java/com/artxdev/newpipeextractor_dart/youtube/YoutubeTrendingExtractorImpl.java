@@ -1,65 +1,66 @@
 package com.artxdev.newpipeextractor_dart.youtube;
 
-import org.schabi.newpipe.extractor.Image;
-import org.schabi.newpipe.extractor.ListExtractor;
-import org.schabi.newpipe.extractor.localization.Localization;
-import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeTrendingExtractor;
-import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import com.artxdev.newpipeextractor_dart.FetchData;
 
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import org.schabi.newpipe.extractor.InfoItem;
+import org.schabi.newpipe.extractor.ListExtractor;
+import org.schabi.newpipe.extractor.kiosk.KioskExtractor;
+import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
-import android.os.Build;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.google.gson.Gson;
+public final class YoutubeTrendingExtractorImpl {
 
-public class YoutubeTrendingExtractorImpl {
+    private YoutubeTrendingExtractorImpl() {
+    }
 
-    private static YoutubeTrendingExtractor extractor;
-    private static ListExtractor.InfoItemsPage<StreamInfoItem> itemsPage;
-
-    public static Map<Integer, Map<String, String>> getTrendingPage() throws Exception {
-        extractor = (YoutubeTrendingExtractor) YouTube.getKioskList().getDefaultKioskExtractor();
-        extractor.forceLocalization(Localization.fromLocale(Locale.getDefault()));
+    /**
+     * Returns the streams of a YouTube kiosk.
+     *
+     * <p>Two things changed upstream and both silently broke the old implementation:</p>
+     *
+     * <ul>
+     *   <li>YouTube removed the classic Trending page on 2025-07-21, so the {@code Trending}
+     *       kiosk now throws {@code Could not get "Now" or "Videos" trending tab}. What remains
+     *       are the category kiosks ({@code trending_music}, {@code trending_gaming},
+     *       {@code trending_movies_and_shows}, {@code trending_podcasts_episodes}) and
+     *       {@code live}.</li>
+     *   <li>Since NewPipeExtractor v0.25 the <em>default</em> kiosk is {@code live}, so the old
+     *       {@code getDefaultKioskExtractor()} call had already started returning live streams
+     *       under the name "trending".</li>
+     * </ul>
+     *
+     * @param kioskId the kiosk to fetch, or null for the service default
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<Integer, Map<String, String>> getTrendingPage(final String kioskId)
+            throws Exception {
+        final KioskExtractor<? extends InfoItem> extractor =
+                (KioskExtractor<? extends InfoItem>) (kioskId == null || kioskId.isEmpty()
+                        ? YouTube.getKioskList().getDefaultKioskExtractor()
+                        : YouTube.getKioskList().getExtractorById(kioskId, null));
         extractor.fetchPage();
-        itemsPage = extractor.getInitialPage();
-        List<StreamInfoItem> items = itemsPage.getItems();
-        Map<Integer, Map<String, String>> itemsMap = new HashMap<>();
-        for(int i = 0; i < items.size(); i++) {
-            StreamInfoItem item = items.get(i);
-            Map<String, String> itemMap = new HashMap<>();
-            itemMap.put("name", item.getName());
-            itemMap.put("uploaderName", item.getUploaderName());
-            itemMap.put("uploaderUrl", item.getUploaderUrl());
-            itemMap.put("uploadDate", item.getTextualUploadDate());
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-                } else {
-                    itemMap.put("date", null);
-                }
-            } catch (NullPointerException ignore) {
-                itemMap.put("date", null);
+
+        final ListExtractor.InfoItemsPage<? extends InfoItem> page = extractor.getInitialPage();
+
+        // Some kiosks mix in non-stream items; the Dart API only exposes streams.
+        final List<StreamInfoItem> streams = new ArrayList<>();
+        for (final InfoItem item : page.getItems()) {
+            if (item instanceof StreamInfoItem) {
+                streams.add((StreamInfoItem) item);
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                itemMap.put("uploaderAvatars", new Gson().toJson(item.getUploaderAvatars().stream().map(Image::getUrl).collect(Collectors.toList())));
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                itemMap.put("thumbnails", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
-            }
-            itemMap.put("duration", String.valueOf(item.getDuration()));
-            itemMap.put("viewCount", String.valueOf(item.getViewCount()));
-            itemMap.put("url", item.getUrl());
-            itemMap.put("id", YoutubeLinkHandler.getIdFromStreamUrl(item.getUrl()));
-            itemsMap.put(i, itemMap);
         }
-        return itemsMap;
+        return FetchData.fetchStreamInfoItems(streams);
+    }
+
+    /** Kiosk ids this build of NewPipeExtractor knows about. */
+    public static List<String> getAvailableKiosks() throws Exception {
+        final Set<String> kiosks = YouTube.getKioskList().getAvailableKiosks();
+        return new ArrayList<>(kiosks);
     }
 }

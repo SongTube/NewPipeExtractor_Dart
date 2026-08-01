@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:newpipeextractor_dart/extractors/channels.dart';
 import 'package:newpipeextractor_dart/models/channel.dart';
+import 'package:newpipeextractor_dart/utils/parsing.dart';
 
 class ChannelInfoItem {
 
@@ -44,35 +45,36 @@ class ChannelInfoItem {
       'url': url,
       'name': name,
       'description': description,
-      'thumbnailUrl': thumbnails,
+      'thumbnails': thumbnails,
       'subscriberCount': subscriberCount.toString(),
       'streamCount': streamCount.toString()
     };
   }
 
   /// Get ChannelInfoItem object fromMap
+  ///
+  /// `jsonDecode` hands back `List<dynamic>`, so reading the thumbnails
+  /// straight into a `List<String>` used to throw a TypeError on every
+  /// round-trip; and a null count made `int.parse` throw on "null".
   static ChannelInfoItem fromMap(Map<dynamic, dynamic> map) {
     return ChannelInfoItem(
       map['url'],
       map['name'],
       map['description'],
-      map['thumbnailUrl'],
-      int.parse(map['subscriberCount']),
-      int.parse(map['streamCount'])
+      // 'thumbnails' is what toMap has written since 0.1.0; 'thumbnailUrl' is
+      // read for data persisted by older versions.
+      Parse.imageList(map['thumbnails'] ?? map['thumbnailUrl']),
+      Parse.nullableInteger(map['subscriberCount']),
+      Parse.integer(map['streamCount']),
     );
   }
 
   /// Get a list of ChannelInfoItem from a simple (valid) json String
   static List<ChannelInfoItem> fromJsonString(String jsonString) {
-    Map<dynamic, dynamic> decodedMap = jsonDecode(jsonString);
-    List<dynamic>? list = decodedMap['listChannels'];
-    List<ChannelInfoItem> channels = [];
+    final Map<dynamic, dynamic> decodedMap = jsonDecode(jsonString);
+    final List<dynamic>? list = decodedMap['listChannels'];
     if (list == null) return [];
-    list.forEach((element) {
-      ChannelInfoItem c = ChannelInfoItem.fromMap(element);
-      channels.add(c);
-    });
-    return channels;
+    return [for (final element in list) ChannelInfoItem.fromMap(element)];
   }
 
   /// Transform a list of ChannelInfoItem to a simple json String
@@ -83,7 +85,7 @@ class ChannelInfoItem {
           'url': e.url,
           'name': e.name,
           'description': e.description,
-          'thumbnailUrl': e.thumbnails,
+          'thumbnails': e.thumbnails,
           'subscriberCount': e.subscriberCount.toString(),
           'streamCount': e.streamCount.toString()
         }

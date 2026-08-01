@@ -8,58 +8,75 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:8.11.1'
+    }
+}
+
+// NewPipeExtractor is only published on JitPack, and the consuming app resolves
+// this plugin's transitive dependencies against *its own* repository list. A
+// plain `allprojects` block here covers only this project, so the app build
+// fails with "Could not find com.github.TeamNewPipe:NewPipeExtractor". Register
+// the repository on every project in the build instead.
+//
+// Apps that lock repositories down with
+// `repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)` must add
+// `maven { url = uri("https://jitpack.io") }` to their own settings.gradle.
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri('https://jitpack.io') }
     }
 }
 
 apply plugin: 'com.android.library'
 
-allprojects {
-    apply plugin: 'maven-publish'
-
-    repositories {
-        google()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-        // Comment this if you're building Release, this is for Android Studio indexing
-        // maven {
-        //     url 'http://download.flutter.io'
-        // }
-    }
-}
-
 android {
+    namespace 'com.artxdev.newpipeextractor_dart'
 
-    compileSdkVersion 34
+    compileSdk 36
 
     defaultConfig {
-        minSdkVersion 22
-        // Required when setting minSdkVersion to 20 or lower
-        multiDexEnabled true
+        minSdk 24
+        // Applied to the consuming app's R8 run, so release builds work without
+        // the app having to know about Rhino/protobuf.
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     compileOptions {
-        // Flag to enable support for the new language APIs
+        // NewPipeExtractor and this plugin use java.time, which is API 26+ natively.
         coreLibraryDesugaringEnabled true
-        // Sets Java compatibility to Java 8
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
-    dependencies {
-        // Comment this if you're building Release, this is for Android Studio indexing
-        //api "io.flutter:flutter_embedding_debug:1.0.0-d4453f601890ec682bbf8f5659b70f15cce1d67d"
-        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
-        implementation 'androidx.annotation:annotation:1.1.0'
-        implementation 'com.github.teamnewpipe:NewPipeExtractor:v0.24.2'
-        implementation 'org.jsoup:jsoup:1.13.1'
-        implementation 'org.mozilla:rhino:1.7.12'
-        implementation ('com.github.spotbugs:spotbugs-annotations:4.8.3'){
-            force = true
-        }
-        implementation 'org.nibor.autolink:autolink:0.10.0'
-        implementation 'junit:junit:4.13.1'
-        implementation "com.squareup.okhttp3:okhttp:3.12.13"
-        implementation 'com.google.code.gson:gson:2.8.6'
+    lint {
+        // Don't fail a consumer's build over lint findings in this library.
+        abortOnError false
     }
+
+    testOptions {
+        unitTests.all {
+            it.testLogging {
+                events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+                showStandardStreams = true
+            }
+        }
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    implementation 'androidx.annotation:annotation:1.9.1'
+    implementation 'androidx.preference:preference:1.2.1'
+
+    // Pulls jsoup / rhino / nanojson / protobuf-javalite in transitively at the
+    // versions it was built against. Do not pin those separately -- stale pins
+    // silently break extraction at runtime.
+    implementation 'com.github.TeamNewPipe:NewPipeExtractor:v0.26.4'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    testImplementation 'junit:junit:4.13.2'
 }

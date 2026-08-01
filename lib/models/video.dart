@@ -55,117 +55,63 @@ class YoutubeVideo {
   Future<YoutubeVideo> get getStreams async =>
     await VideoExtractor.getStream(videoInfo.url);
   
+  /// Vertical pixel count parsed out of a resolution label such as
+  /// `1080p60`. Returns -1 when the extractor could not label the stream, so
+  /// unlabelled streams sort last instead of throwing -- `resolution` is
+  /// nullable and these getters used to force-unwrap it.
+  static int _resolutionHeight(String? resolution) {
+    if (resolution == null) return -1;
+    final digits = RegExp(r'^\d+').firstMatch(resolution)?.group(0);
+    return digits == null ? -1 : int.parse(digits);
+  }
+
+  static T? _best<T>(List<T>? streams, int Function(T) rank, String onNull) {
+    if (streams == null) throw StreamIsNull(onNull);
+    T? best;
+    for (final stream in streams) {
+      if (best == null || rank(best) < rank(stream)) best = stream;
+    }
+    return best;
+  }
+
   /// Gets the best quality video only stream
   /// (By resolution, fps is not taken in consideration)
-  VideoOnlyStream? get videoOnlyWithHighestQuality {
-    if (videoOnlyStreams == null)
-      throw StreamIsNull("Tried to access a null VideoOnly stream");
-    VideoOnlyStream? video;
-    for (var i = 0; i < videoOnlyStreams!.length; i++) {
-      if (video == null) {
-        video = videoOnlyStreams![i];
-      } else {
-        int curRes = int.parse(video.resolution!.split("p").first);
-        int newRes = int.parse(videoOnlyStreams![i].resolution!.split("p").first);
-        if (curRes < newRes) {
-          video = videoOnlyStreams![i];
-        }
-      }
-    }
-    return video;
-  }
+  VideoOnlyStream? get videoOnlyWithHighestQuality => _best(
+        videoOnlyStreams,
+        (s) => _resolutionHeight(s.resolution),
+        'Tried to access a null VideoOnly stream',
+      );
 
   /// Gets the best quality video stream
   /// (By resolution, fps is not taken in consideration)
-  VideoStream? get videoWithHighestQuality {
-    if (videoStreams == null)
-      throw StreamIsNull("Tried to access a null Video stream");
-    VideoStream? video;
-    for (var i = 0; i < videoStreams!.length; i++) {
-      if (video == null) {
-        video = videoStreams![i];
-      } else {
-        int curRes = int.parse(video.resolution!.split("p").first);
-        int newRes = int.parse(videoStreams![i].resolution!.split("p").first);
-        if (curRes < newRes) {
-          video = videoStreams![i];
-        }
-      }
-    }
-    return video;
-  }
+  VideoStream? get videoWithHighestQuality => _best(
+        videoStreams,
+        (s) => _resolutionHeight(s.resolution),
+        'Tried to access a null Video stream',
+      );
 
   /// Gets the best quality audio stream by Bitrate
-  AudioOnlyStream? get audioWithHighestQuality {
-    if (audioOnlyStreams == null)
-      throw StreamIsNull("Tried to access a null Audio stream");
-    AudioOnlyStream? audio;
-    for (var i = 0; i < audioOnlyStreams!.length; i++) {
-      if (audio == null) {
-        audio = audioOnlyStreams![i];
-      } else {
-        int curBitrate = audio.averageBitrate;
-        int newBitrate = audioOnlyStreams![i].averageBitrate;
-        if (curBitrate < newBitrate) {
-          audio = audioOnlyStreams![i];
-        }
-      }
-    }
-    return audio;
-  }
+  AudioOnlyStream? get audioWithHighestQuality => _best(
+        audioOnlyStreams,
+        (s) => s.averageBitrate,
+        'Tried to access a null Audio stream',
+      );
 
   /// Gets the best AAC format audio stream
-  AudioOnlyStream? get audioWithBestAacQuality {
-    if (audioOnlyStreams == null)
-      throw StreamIsNull("Tried to access a null Audio stream");
-    List<AudioOnlyStream> newList = [];
-    audioOnlyStreams!.forEach((element) {
-      if (element.formatName == "m4a") {
-        newList.add(element);
-      }
-    });
-    if (newList.isEmpty)
-      return audioWithHighestQuality;
-    AudioOnlyStream? audio;
-    for (var i = 0; i < newList.length; i++) {
-      if (audio == null) {
-        audio = newList[i];
-      } else {
-        int curBitrate = audio.averageBitrate;
-        int newBitrate = newList[i].averageBitrate;
-        if (curBitrate < newBitrate) {
-          audio = newList[i];
-        }
-      }
-    }
-    return audio;
-  }
+  AudioOnlyStream? get audioWithBestAacQuality => _bestOfFormat('m4a');
 
   /// Gets the best OGG format audio stream
-  AudioOnlyStream? get audioWithBestOggQuality {
-    if (audioOnlyStreams == null)
-      throw StreamIsNull("Tried to access a null Audio stream");
-    List<AudioOnlyStream> newList = [];
-    audioOnlyStreams!.forEach((element) {
-      if (element.formatName == "webm") {
-        newList.add(element);
-      }
-    });
-    if (newList.isEmpty)
-      return audioWithHighestQuality;
-    AudioOnlyStream? audio;
-    for (var i = 0; i < newList.length; i++) {
-      if (audio == null) {
-        audio = newList[i];
-      } else {
-        int curBitrate = audio.averageBitrate;
-        int newBitrate = newList[i].averageBitrate;
-        if (curBitrate < newBitrate) {
-          audio = newList[i];
-        }
-      }
+  AudioOnlyStream? get audioWithBestOggQuality => _bestOfFormat('webm');
+
+  AudioOnlyStream? _bestOfFormat(String formatName) {
+    if (audioOnlyStreams == null) {
+      throw StreamIsNull('Tried to access a null Audio stream');
     }
-    return audio;
+    final matching = audioOnlyStreams!
+        .where((element) => element.formatName == formatName)
+        .toList();
+    if (matching.isEmpty) return audioWithHighestQuality;
+    return _best(matching, (s) => s.averageBitrate, '');
   }
 
   /// Get the best audio stream for the specified video stream

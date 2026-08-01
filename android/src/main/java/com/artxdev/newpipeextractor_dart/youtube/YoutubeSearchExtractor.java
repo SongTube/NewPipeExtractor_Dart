@@ -1,50 +1,43 @@
 package com.artxdev.newpipeextractor_dart.youtube;
 
 import com.artxdev.newpipeextractor_dart.FetchData;
-import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
 
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ListExtractor;
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
-import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem;
 import org.schabi.newpipe.extractor.search.SearchExtractor;
-import org.schabi.newpipe.extractor.search.SearchInfo;
-import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelExtractor;
-import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeCommentsExtractor;
-import org.schabi.newpipe.extractor.stream.StreamInfo;
-import org.schabi.newpipe.extractor.stream.StreamInfoItem;
-import org.schabi.newpipe.extractor.stream.StreamInfoItemsCollector;
-
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class YoutubeSearchExtractor {
 
     private SearchExtractor extractor;
     private ListExtractor.InfoItemsPage<InfoItem> itemsPage;
 
-    public Map<String, Map<Integer, Map<String, String>>> searchYoutube(String query, List<String> filters) throws Exception {
-        extractor = YouTube.getSearchExtractor(query, filters, "");
+    public Map<String, Map<Integer, Map<String, String>>> searchYoutube(
+            final String query, final List<String> filters) throws Exception {
+        // Defensive copy: the list arrives straight off the method channel.
+        final List<String> contentFilter =
+                filters == null ? Collections.emptyList() : new ArrayList<>(filters);
+        extractor = YouTube.getSearchExtractor(query, contentFilter, "");
         extractor.fetchPage();
         itemsPage = extractor.getInitialPage();
-        List<InfoItem> items = itemsPage.getItems();
-        return FetchData.fetchInfoItems(items);
+        return FetchData.fetchInfoItems(itemsPage.getItems());
     }
 
     public Map<String, Map<Integer, Map<String, String>>> getNextPage() throws Exception {
-        if (itemsPage.hasNextPage()) {
-            itemsPage = extractor.getPage(itemsPage.getNextPage());
-            List<InfoItem> items = itemsPage.getItems();
-            return FetchData.fetchInfoItems(items);
-        } else {
-            return new HashMap<>();
+        if (extractor == null || itemsPage == null) {
+            throw new IllegalStateException("searchYoutube must be called before getNextPage");
         }
+        if (!itemsPage.hasNextPage()) {
+            // Still the full bucket shape, so the Dart parser can index into it safely.
+            return FetchData.fetchInfoItems(Collections.emptyList());
+        }
+        itemsPage = extractor.getPage(itemsPage.getNextPage());
+        return FetchData.fetchInfoItems(itemsPage.getItems());
     }
-
 }

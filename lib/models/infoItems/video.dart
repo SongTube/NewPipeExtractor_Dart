@@ -4,6 +4,7 @@ import 'package:newpipeextractor_dart/extractors/channels.dart';
 import 'package:newpipeextractor_dart/extractors/videos.dart';
 import 'package:newpipeextractor_dart/models/channel.dart';
 import 'package:newpipeextractor_dart/models/video.dart';
+import 'package:newpipeextractor_dart/utils/parsing.dart';
 import 'package:newpipeextractor_dart/utils/thumbnails.dart';
 
 class StreamInfoItem {
@@ -85,6 +86,9 @@ class StreamInfoItem {
   }
 
   /// Get StreamInfoItem object fromMap
+  ///
+  /// Uses tolerant parsing: `int.parse` threw whenever a count was absent, and
+  /// `List<String>.from` threw on the `List<dynamic>` that `jsonDecode` returns.
   static StreamInfoItem fromMap(Map<dynamic, dynamic> map) {
     return StreamInfoItem(
       map['url'],
@@ -92,25 +96,20 @@ class StreamInfoItem {
       map['name'],
       map['uploaderName'],
       map['uploaderUrl'],
-      List<String>.from(map['uploaderAvatars']),
+      Parse.imageList(map['uploaderAvatars']),
       map['uploadDate'],
       map['date'],
-      int.parse(map['duration']),
-      int.parse(map['viewCount'])
+      Parse.integer(map['duration']),
+      Parse.integer(map['viewCount']),
     );
   }
 
   /// Get a list of StreamInfoItem from a simple (valid) json String
   static List<StreamInfoItem> fromJsonString(String jsonString) {
-    Map<String, dynamic> decodedMap = jsonDecode(jsonString);
-    List<dynamic>? list = decodedMap['listStream'];
-    List<StreamInfoItem> streams = [];
+    final Map<String, dynamic> decodedMap = jsonDecode(jsonString);
+    final List<dynamic>? list = decodedMap['listStream'];
     if (list == null) return [];
-    list.forEach((element) {
-      StreamInfoItem s = StreamInfoItem.fromMap(element);
-      streams.add(s);
-    });
-    return streams;
+    return [for (final element in list) StreamInfoItem.fromMap(element)];
   }
 
   /// Transform a list of StreamInfoItem into a simple json String

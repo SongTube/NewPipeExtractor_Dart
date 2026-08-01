@@ -1,104 +1,106 @@
 package com.artxdev.newpipeextractor_dart.youtube;
 
-import com.artxdev.newpipeextractor_dart.downloader.DownloaderImpl;
-import com.google.gson.Gson;
+import com.artxdev.newpipeextractor_dart.FetchData;
 
-import org.schabi.newpipe.extractor.Image;
+import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ListExtractor;
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.extractor.Page;
-import org.schabi.newpipe.extractor.feed.FeedExtractor;
-import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelExtractor;
-import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeFeedExtractor;
-import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.extractor.channel.ChannelExtractor;
+import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor;
+import org.schabi.newpipe.extractor.channel.tabs.ChannelTabs;
+import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
-
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
-import android.os.Build;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class YoutubeChannelExtractorImpl {
 
-    private YoutubeChannelExtractor extractor;
-    private FeedExtractor feedExtractor;
+    private ChannelTabExtractor uploadsExtractor;
+    private ListExtractor.InfoItemsPage<InfoItem> currentPage;
 
-    private ListExtractor.InfoItemsPage<StreamInfoItem> currentPage;
-
-    public Map<String, String> getChannel(String url) throws Exception {
-        extractor = (YoutubeChannelExtractor) YouTube
-                .getChannelExtractor(url);
+    public Map<String, String> getChannel(final String url) throws Exception {
+        // No cast to YoutubeChannelExtractor: every field read below is on the base class, and
+        // the concrete type varies (age-gated channels use a different implementation).
+        final ChannelExtractor extractor = YouTube.getChannelExtractor(url);
         extractor.fetchPage();
-        Map<String, String> channelMap = new HashMap();
+
+        final Map<String, String> channelMap = new java.util.HashMap<>();
         channelMap.put("url", extractor.getUrl());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            channelMap.put("avatars", new Gson().toJson(extractor.getAvatars().stream().map(Image::getUrl).collect(Collectors.toList())));
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            channelMap.put("banners", new Gson().toJson(extractor.getBanners().stream().map(Image::getUrl).collect(Collectors.toList())));
-        }
-        channelMap.put("description", extractor.getDescription());
-        channelMap.put("feedUrl", extractor.getFeedUrl());
         channelMap.put("id", extractor.getId());
         channelMap.put("name", extractor.getName());
+        channelMap.put("avatars", FetchData.imagesToJson(extractor.getAvatars()));
+        channelMap.put("banners", FetchData.imagesToJson(extractor.getBanners()));
+        channelMap.put("description", extractor.getDescription());
         channelMap.put("subscriberCount", String.valueOf(extractor.getSubscriberCount()));
+        channelMap.put("verified", String.valueOf(extractor.isVerified()));
+        try {
+            channelMap.put("feedUrl", extractor.getFeedUrl());
+        } catch (final Exception ignored) {
+            channelMap.put("feedUrl", null);
+        }
         return channelMap;
     }
 
-    public Map<Integer, Map<String, String>> getChannelUploads(String url) throws Exception {
-        extractor = (YoutubeChannelExtractor) YouTube
-                .getChannelExtractor(url);
-        extractor.fetchPage();
-        feedExtractor = YouTube.getFeedExtractor(extractor.getUrl());
-        feedExtractor.fetchPage();
-        currentPage = feedExtractor.getInitialPage();
-        List<StreamInfoItem> items = currentPage.getItems();
-        return parseData(items);
+    /**
+     * Uploads come from the channel's "Videos" tab.
+     *
+     * <p>This used to go through the RSS {@code FeedExtractor}, which caps out at ~15 items and
+     * exposes no next page -- so {@link #getChannelNextPage()} could never return anything. The
+     * tab extractor pages properly.</p>
+     */
+    public Map<Integer, Map<String, String>> getChannelUploads(final String url) throws Exception {
+        final ChannelExtractor channel = YouTube.getChannelExtractor(url);
+        channel.fetchPage();
+
+        final ListLinkHandler videosTab = findTab(channel.getTabs(), ChannelTabs.VIDEOS);
+        if (videosTab == null) {
+            throw new IllegalStateException("Channel has no videos tab: " + url);
+        }
+
+        uploadsExtractor = YouTube.getChannelTabExtractor(videosTab);
+        uploadsExtractor.fetchPage();
+        currentPage = uploadsExtractor.getInitialPage();
+        return streamItems(currentPage.getItems());
     }
 
     public Map<Integer, Map<String, String>> getChannelNextPage() throws Exception {
-        if (currentPage.hasNextPage()) {
-            currentPage = feedExtractor.getPage(currentPage.getNextPage());
-            List<StreamInfoItem> items = currentPage.getItems();
-            return parseData(items);
-        } else {
-            return new HashMap<>();
+        if (uploadsExtractor == null || currentPage == null) {
+            throw new IllegalStateException(
+                    "getChannelUploads must be called before getChannelNextPage");
         }
+        if (!currentPage.hasNextPage()) {
+            return Collections.emptyMap();
+        }
+        currentPage = uploadsExtractor.getPage(currentPage.getNextPage());
+        return streamItems(currentPage.getItems());
     }
 
-    public Map<Integer, Map<String, String>> parseData(List<StreamInfoItem> items) {
-        Map<Integer, Map<String, String>> itemsMap = new HashMap<>();
-        for (int i = 0; i < items.size(); i++) {
-            StreamInfoItem item = items.get(i);
-            Map<String, String> itemMap = new HashMap<>();
-            itemMap.put("name", item.getName());
-            itemMap.put("uploaderName", item.getUploaderName());
-            itemMap.put("uploaderUrl", item.getUploaderUrl());
-            itemMap.put("uploadDate", item.getTextualUploadDate());
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    itemMap.put("date", Objects.requireNonNull(item.getUploadDate()).offsetDateTime().format(DateTimeFormatter.ISO_DATE_TIME));
-                } else {
-                    itemMap.put("date", null);
-                }
-            } catch (NullPointerException ignore) {
-                itemMap.put("date", null);
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                itemMap.put("thumbnailUrl", new Gson().toJson(item.getThumbnails().stream().map(Image::getUrl).collect(Collectors.toList())));
-            }
-            itemMap.put("duration", String.valueOf(item.getDuration()));
-            itemMap.put("viewCount", String.valueOf(item.getViewCount()));
-            itemMap.put("url", item.getUrl());
-            itemMap.put("id", YoutubeLinkHandler.getIdFromStreamUrl(item.getUrl()));
-            itemsMap.put(i, itemMap);
+    private static ListLinkHandler findTab(final List<ListLinkHandler> tabs, final String name) {
+        if (tabs == null) {
+            return null;
         }
-        return itemsMap;
+        for (final ListLinkHandler tab : tabs) {
+            if (tab.getContentFilters().contains(name)) {
+                return tab;
+            }
+        }
+        return null;
+    }
+
+    /** A channel tab yields mixed {@link InfoItem}s; the uploads API only exposes streams. */
+    private static Map<Integer, Map<String, String>> streamItems(final List<InfoItem> items) {
+        final List<StreamInfoItem> streams = new ArrayList<>();
+        if (items != null) {
+            for (final InfoItem item : items) {
+                if (item instanceof StreamInfoItem) {
+                    streams.add((StreamInfoItem) item);
+                }
+            }
+        }
+        return FetchData.fetchStreamInfoItems(streams);
     }
 }

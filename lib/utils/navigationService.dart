@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// Gives the plugin a way to push the reCaptcha page without a [BuildContext].
+///
+/// The host app must hand [navigationKey] to its `MaterialApp.navigatorKey`,
+/// otherwise reCaptcha challenges cannot be solved and the underlying error is
+/// surfaced to the caller instead.
 class NavigationService {
   late GlobalKey<NavigatorState> navigationKey;
 
@@ -9,26 +14,36 @@ class NavigationService {
     navigationKey = GlobalKey<NavigatorState>();
   }
 
-  Future<dynamic> navigateToReplacement(String _rn, String argument) async {
-    var result = await navigationKey.currentState!.pushReplacementNamed(_rn);
-    return result;
+  /// Whether the host app wired [navigationKey] into its navigator.
+  bool get hasNavigator => navigationKey.currentState != null;
+
+  Future<dynamic> navigateToReplacement(
+      String routeName, String argument) async {
+    final navigator = navigationKey.currentState;
+    if (navigator == null) return null;
+    // The argument used to be dropped here, so the target route got null.
+    return navigator.pushReplacementNamed(routeName, arguments: argument);
   }
 
-  Future<dynamic> navigateTo(String _rn, String argument) async {
-    var result;
-    String? currentRoute = ModalRoute.of(navigationKey.currentContext!)!.settings.name;
-    if (currentRoute != 'reCaptcha') {
-      result = await navigationKey.currentState!.pushNamed(_rn, arguments: argument);
+  Future<dynamic> navigateTo(String routeName, String argument) async {
+    final navigator = navigationKey.currentState;
+    if (navigator == null) return null;
+
+    // Don't stack a second copy of a route that is already on top.
+    final context = navigationKey.currentContext;
+    if (context != null && ModalRoute.of(context)?.settings.name == routeName) {
+      return null;
     }
-    return result;
+    return navigator.pushNamed(routeName, arguments: argument);
   }
 
-  Future<dynamic> navigateToRoute(MaterialPageRoute _rn) async {
-    var result = await navigationKey.currentState!.push(_rn);
-    return result;
+  Future<dynamic> navigateToRoute(MaterialPageRoute route) async {
+    final navigator = navigationKey.currentState;
+    if (navigator == null) return null;
+    return navigator.push(route);
   }
 
-  goback() {
-    return navigationKey.currentState!.pop();
+  void goback() {
+    navigationKey.currentState?.pop();
   }
 }

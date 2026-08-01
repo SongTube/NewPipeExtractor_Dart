@@ -1,10 +1,8 @@
 package com.artxdev.newpipeextractor_dart.downloader;
 
-import android.text.TextUtils;
-
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public final class CookieUtils {
@@ -12,14 +10,19 @@ public final class CookieUtils {
     }
 
     public static String concatCookies(final Collection<String> cookieStrings) {
-        final Set<String> cookieSet = new HashSet<>();
+        // LinkedHashSet, not HashSet: cookie order was previously arbitrary and
+        // varied between runs. String.join replaces android.text.TextUtils.join
+        // so the downloader stays testable off-device.
+        final Set<String> cookieSet = new LinkedHashSet<>();
         for (final String cookies : cookieStrings) {
-            cookieSet.addAll(splitCookies(cookies));
+            if (cookies != null && !cookies.isEmpty()) {
+                cookieSet.addAll(splitCookies(cookies));
+            }
         }
-        return TextUtils.join("; ", cookieSet).trim();
+        return String.join("; ", cookieSet).trim();
     }
 
     public static Set<String> splitCookies(final String cookies) {
-        return new HashSet<>(Arrays.asList(cookies.split("; *")));
+        return new LinkedHashSet<>(Arrays.asList(cookies.split("; *")));
     }
 }

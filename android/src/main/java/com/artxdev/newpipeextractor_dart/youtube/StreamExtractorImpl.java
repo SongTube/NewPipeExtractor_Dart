@@ -3,177 +3,138 @@ package com.artxdev.newpipeextractor_dart.youtube;
 import com.artxdev.newpipeextractor_dart.FetchData;
 
 import org.schabi.newpipe.extractor.InfoItem;
-import org.schabi.newpipe.extractor.InfoItemExtractor;
 import org.schabi.newpipe.extractor.InfoItemsCollector;
-import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
-import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem;
-import org.schabi.newpipe.extractor.stream.AudioStream;
-import org.schabi.newpipe.extractor.stream.StreamExtractor;
-import org.schabi.newpipe.extractor.stream.StreamInfoItem;
-import org.schabi.newpipe.extractor.stream.StreamSegment;
-import org.schabi.newpipe.extractor.stream.VideoStream;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 
-public class StreamExtractorImpl {
+import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.stream.StreamExtractor;
+import org.schabi.newpipe.extractor.stream.VideoStream;
 
-    public static Map<String, String> getInfo(String url) throws Exception {
-        StreamExtractor extractor;
-        extractor = YouTube.getStreamExtractor(url);
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+public final class StreamExtractorImpl {
+
+    private StreamExtractorImpl() {
+    }
+
+    private static StreamExtractor fetch(final String url) throws Exception {
+        final StreamExtractor extractor = YouTube.getStreamExtractor(url);
         extractor.fetchPage();
-        // Extract all Video Information
-        return FetchData.fetchVideoInfo(extractor);
+        return extractor;
     }
 
-    public static List<Map> getStream(String url) throws Exception {
-        StreamExtractor extractor;
-        extractor = YouTube.getStreamExtractor(url);
-        extractor.fetchPage();
-        List<Map> listMaps = new ArrayList<>();
-
-        // Extract all Video Information
-        listMaps.add(FetchData.fetchVideoInfo(extractor));
-
-        // Extract all AudioOnlyStreams Information
-        Map<Integer, Map<String, String>> audioOnlyStreamsMap = new HashMap<>();
-        List<AudioStream> audioStreams = extractor.getAudioStreams();
-        for (int i = 0; i < audioStreams.size(); i++) {
-            AudioStream audioStream = audioStreams.get(i);
-            audioOnlyStreamsMap.put(i, FetchData.fetchAudioStreamInfo(audioStream));
+    /**
+     * Some itags carry no usable content URL (DRM / server-side ads). Dropping them here keeps the
+     * Dart models from producing streams with a null {@code url}.
+     */
+    private static <T extends org.schabi.newpipe.extractor.stream.Stream> List<T> playable(
+            final List<T> streams) {
+        final List<T> result = new ArrayList<>();
+        if (streams == null) {
+            return result;
         }
-        listMaps.add(audioOnlyStreamsMap);
-
-        // Extract all VideoOnlyStreams Information
-        Map<Integer, Map<String, String>> videoOnlyStreamsMap = new HashMap<>();
-        List<VideoStream> videoOnlyStreams = extractor.getVideoOnlyStreams();
-        for (int i = 0; i < videoOnlyStreams.size(); i++) {
-            VideoStream videoOnlyStream = videoOnlyStreams.get(i);
-            videoOnlyStreamsMap.put(i, FetchData.fetchVideoStreamInfo(videoOnlyStream));
+        for (final T stream : streams) {
+            if (stream != null && stream.getContent() != null && !stream.getContent().isEmpty()) {
+                result.add(stream);
+            }
         }
-        listMaps.add(videoOnlyStreamsMap);
-
-        // Extract all VideoStreams Information (Streams which contains Audio)
-        Map<Integer, Map<String, String>> videoStreamsMap = new HashMap<>();
-        List<VideoStream> videoStreams = extractor.getVideoStreams();
-        for (int i = 0; i < videoStreams.size(); i++) {
-            VideoStream videoStream = videoStreams.get(i);
-            videoStreamsMap.put(i, FetchData.fetchVideoStreamInfo(videoStream));
-        }
-        listMaps.add(videoStreamsMap);
-
-        // Stream Segments
-        listMaps.add(fetchStreamSegments(extractor.getStreamSegments()));
-
-        return listMaps;
+        return result;
     }
 
-    public static List<Map> getMediaStreams(String url) throws Exception {
-        StreamExtractor extractor;
-        extractor = YouTube.getStreamExtractor(url);
-        extractor.fetchPage();
-        List<Map> listMaps = new ArrayList<>();
-
-        // Extract all AudioOnlyStreams Information
-        Map<Integer, Map<String, String>> audioOnlyStreamsMap = new HashMap<>();
-        List<AudioStream> audioStreams = extractor.getAudioStreams();
-        for (int i = 0; i < audioStreams.size(); i++) {
-            AudioStream audioStream = audioStreams.get(i);
-            audioOnlyStreamsMap.put(i, FetchData.fetchAudioStreamInfo(audioStream));
+    private static List<AudioStream> audioStreams(final StreamExtractor extractor) {
+        try {
+            return playable(extractor.getAudioStreams());
+        } catch (final Exception e) {
+            return Collections.emptyList();
         }
-        listMaps.add(audioOnlyStreamsMap);
-
-        // Extract all VideoOnlyStreams Information
-        Map<Integer, Map<String, String>> videoOnlyStreamsMap = new HashMap<>();
-        List<VideoStream> videoOnlyStreams = extractor.getVideoOnlyStreams();
-        for (int i = 0; i < videoOnlyStreams.size(); i++) {
-            VideoStream videoOnlyStream = videoOnlyStreams.get(i);
-            videoOnlyStreamsMap.put(i, FetchData.fetchVideoStreamInfo(videoOnlyStream));
-        }
-        listMaps.add(videoOnlyStreamsMap);
-
-        // Extract all VideoStreams Information (Streams which contains Audio)
-        Map<Integer, Map<String, String>> videoStreamsMap = new HashMap<>();
-        List<VideoStream> videoStreams = extractor.getVideoStreams();
-        for (int i = 0; i < videoStreams.size(); i++) {
-            VideoStream videoStream = videoStreams.get(i);
-            videoStreamsMap.put(i, FetchData.fetchVideoStreamInfo(videoStream));
-        }
-        listMaps.add(videoStreamsMap);
-
-        // Stream Segments
-        listMaps.add(fetchStreamSegments(extractor.getStreamSegments()));
-
-        return listMaps;
     }
 
-    public static Map<Integer, Map<String, String>> getVideoOnlyStreams(String url) throws Exception {
-        StreamExtractor extractor;
-        extractor = YouTube.getStreamExtractor(url);
-        extractor.fetchPage();
-        // Extract all VideoOnlyStreams Information
-        Map<Integer, Map<String, String>> videoOnlyStreamsMap = new HashMap<>();
-        List<VideoStream> videoOnlyStreams = extractor.getVideoOnlyStreams();
-        for (int i = 0; i < videoOnlyStreams.size(); i++) {
-            VideoStream videoOnlyStream = videoOnlyStreams.get(i);
-            videoOnlyStreamsMap.put(i, FetchData.fetchVideoStreamInfo(videoOnlyStream));
+    private static List<VideoStream> videoOnlyStreams(final StreamExtractor extractor) {
+        try {
+            return playable(extractor.getVideoOnlyStreams());
+        } catch (final Exception e) {
+            return Collections.emptyList();
         }
-        return videoOnlyStreamsMap;
     }
 
-    public static Map<Integer, Map<String, String>> getAudioOnlyStreams(String url) throws Exception {
-        StreamExtractor extractor;
-        extractor = YouTube.getStreamExtractor(url);
-        extractor.fetchPage();
-        // Extract all AudioOnlyStreams Information
-        Map<Integer, Map<String, String>> audioOnlyStreamsMap = new HashMap<>();
-        List<AudioStream> audioStreams = extractor.getAudioStreams();
-        for (int i = 0; i < audioStreams.size(); i++) {
-            AudioStream audioStream = audioStreams.get(i);
-            audioOnlyStreamsMap.put(i, FetchData.fetchAudioStreamInfo(audioStream));
+    private static List<VideoStream> muxedStreams(final StreamExtractor extractor) {
+        try {
+            return playable(extractor.getVideoStreams());
+        } catch (final Exception e) {
+            return Collections.emptyList();
         }
-        return audioOnlyStreamsMap;
     }
 
-    public static Map<Integer, Map<String, String>> getMuxedStreams(String url) throws Exception {
-        StreamExtractor extractor;
-        extractor = YouTube.getStreamExtractor(url);
-        extractor.fetchPage();
-        // Extract all VideoStreams Information (Streams which contains Audio)
-        Map<Integer, Map<String, String>> videoStreamsMap = new HashMap<>();
-        List<VideoStream> videoStreams = extractor.getVideoStreams();
-        for (int i = 0; i < videoStreams.size(); i++) {
-            VideoStream videoStream = videoStreams.get(i);
-            videoStreamsMap.put(i, FetchData.fetchVideoStreamInfo(videoStream));
+    public static Map<String, String> getInfo(final String url) throws Exception {
+        return FetchData.fetchVideoInfo(fetch(url));
+    }
+
+    /**
+     * Video info plus every stream category, in the fixed order the Dart
+     * {@code VideoExtractor.getStream} reads positionally:
+     * info, audio-only, video-only, muxed, segments.
+     */
+    public static List<Map> getStream(final String url) throws Exception {
+        final StreamExtractor extractor = fetch(url);
+        final List<Map> result = new ArrayList<>();
+        result.add(FetchData.fetchVideoInfo(extractor));
+        result.add(FetchData.indexed(audioStreams(extractor), FetchData::fetchAudioStreamInfo));
+        result.add(FetchData.indexed(videoOnlyStreams(extractor), FetchData::fetchVideoStreamInfo));
+        result.add(FetchData.indexed(muxedStreams(extractor), FetchData::fetchVideoStreamInfo));
+        result.add(FetchData.fetchStreamSegments(streamSegments(extractor)));
+        return result;
+    }
+
+    /** Same as {@link #getStream} without the leading info map. */
+    public static List<Map> getMediaStreams(final String url) throws Exception {
+        final StreamExtractor extractor = fetch(url);
+        final List<Map> result = new ArrayList<>();
+        result.add(FetchData.indexed(audioStreams(extractor), FetchData::fetchAudioStreamInfo));
+        result.add(FetchData.indexed(videoOnlyStreams(extractor), FetchData::fetchVideoStreamInfo));
+        result.add(FetchData.indexed(muxedStreams(extractor), FetchData::fetchVideoStreamInfo));
+        result.add(FetchData.fetchStreamSegments(streamSegments(extractor)));
+        return result;
+    }
+
+    public static Map<Integer, Map<String, String>> getVideoOnlyStreams(final String url)
+            throws Exception {
+        return FetchData.indexed(videoOnlyStreams(fetch(url)), FetchData::fetchVideoStreamInfo);
+    }
+
+    public static Map<Integer, Map<String, String>> getAudioOnlyStreams(final String url)
+            throws Exception {
+        return FetchData.indexed(audioStreams(fetch(url)), FetchData::fetchAudioStreamInfo);
+    }
+
+    public static Map<Integer, Map<String, String>> getMuxedStreams(final String url)
+            throws Exception {
+        return FetchData.indexed(muxedStreams(fetch(url)), FetchData::fetchVideoStreamInfo);
+    }
+
+    public static Map<String, Map<Integer, Map<String, String>>> getRelatedStreams(final String url)
+            throws Exception {
+        final InfoItemsCollector<? extends InfoItem, ?> collector = fetch(url).getRelatedItems();
+        if (collector == null) {
+            return FetchData.fetchInfoItems(Collections.emptyList());
         }
-        return videoStreamsMap;
+        return FetchData.fetchInfoItems(collector.getItems());
     }
 
-    public static Map<String, Map<Integer, Map<String, String>>> getRelatedStreams(String url) throws Exception {
-        StreamExtractor extractor = YouTube.getStreamExtractor(url);
-        extractor.fetchPage();
-        InfoItemsCollector<? extends InfoItem, ? extends InfoItemExtractor> collector = extractor.getRelatedItems();
-        List<InfoItem> items = (List<InfoItem>) collector.getItems();
-        return FetchData.fetchInfoItems(items);
+    public static Map<Integer, Map<String, String>> getStreamSegments(final String url)
+            throws Exception {
+        return FetchData.fetchStreamSegments(streamSegments(fetch(url)));
     }
 
-    public static Map<Integer, Map<String, String>> getStreamSegments(String url) throws Exception {
-        StreamExtractor extractor = YouTube.getStreamExtractor(url);
-        extractor.fetchPage();
-        return fetchStreamSegments(extractor.getStreamSegments());
-    }
-
-    public static Map<Integer, Map<String, String>> fetchStreamSegments(List<StreamSegment> segments) {
-        Map<Integer, Map<String, String>> itemsMap = new HashMap<>();
-        for (int i = 0; i < segments.size(); i++) {
-            StreamSegment segment = segments.get(i);
-            itemsMap.put(i, FetchData.fetchStreamSegment(segment));
+    private static List<org.schabi.newpipe.extractor.stream.StreamSegment> streamSegments(
+            final StreamExtractor extractor) {
+        try {
+            return extractor.getStreamSegments();
+        } catch (final Exception e) {
+            return Collections.emptyList();
         }
-        return itemsMap;
     }
-
 }

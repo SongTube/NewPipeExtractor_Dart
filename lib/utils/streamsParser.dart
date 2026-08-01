@@ -1,81 +1,79 @@
-import 'dart:convert';
+import 'package:newpipeextractor_dart/models/infoItems/channel.dart';
+import 'package:newpipeextractor_dart/models/infoItems/playlist.dart';
+import 'package:newpipeextractor_dart/models/infoItems/video.dart';
+import 'package:newpipeextractor_dart/models/streamSegment.dart';
+import 'package:newpipeextractor_dart/utils/parsing.dart';
 
-import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
-
+/// Turns the raw `Map` payloads coming off the method channel into models.
 class StreamsParser {
+  /// Splits the `streams` / `playlists` / `channels` buckets into models.
+  ///
+  /// When [singleList] is false the result always has exactly three entries, in
+  /// that order, so callers can index into it safely. It previously returned an
+  /// empty list when the native side reported an error, which turned every
+  /// failure into a `RangeError` at the call site.
+  static List<dynamic> parseInfoItemListFromMap(dynamic info,
+      {required bool singleList}) {
+    final map = info is Map ? info : const {};
 
-  /// Retrieves a list of different types of InfoItems from the method channel response map
-  static List<dynamic> parseInfoItemListFromMap(info, {required bool singleList}) {
-    if ((info as Map).containsKey("error")) {
-      print(info["error"]);
-      return [];
-    }
-    List<StreamInfoItem> listVideos = StreamsParser
-      .parseStreamListFromMap(info['streams']);
-    List<PlaylistInfoItem> listPlaylists = [];
-    info['playlists'].forEach((_, map) {
-      listPlaylists.add(PlaylistInfoItem(
-        map['url'],
-        map['name'],
-        map['uploaderName'],
-        map.containsKey('thumbnails') ? List<String>.from(jsonDecode(map['thumbnails'])) : [],
-        int.parse(map['streamCount'])
-      ));
-    });
-    List<ChannelInfoItem> listChannels = [];
-    info['channels'].forEach((_, map) {
-      listChannels.add(ChannelInfoItem(
-        map['url'], 
-        map['name'],
-        map['description'],
-        map.containsKey('thumbnails') ? List<String>.from(jsonDecode(map['thumbnails'])) : [],
-        int.parse(map['subscriberCount']),
-        int.parse(map['streamCount'])
-      ));
-    });
+    final listVideos = parseStreamListFromMap(map['streams']);
+    final listPlaylists = Parse.list(
+      map['playlists'],
+      (item) => PlaylistInfoItem(
+        item['url'],
+        item['name'],
+        item['uploaderName'],
+        Parse.imageList(item['thumbnails']),
+        Parse.integer(item['streamCount']),
+      ),
+    );
+    final listChannels = Parse.list(
+      map['channels'],
+      (item) => ChannelInfoItem(
+        item['url'],
+        item['name'],
+        item['description'],
+        Parse.imageList(item['thumbnails']),
+        Parse.integer(item['subscriberCount']),
+        Parse.integer(item['streamCount']),
+      ),
+    );
+
     if (singleList) {
       return <dynamic>[...listPlaylists, ...listVideos];
-    } else {
-      return [
-        listVideos,
-        listPlaylists,
-        listChannels
-      ];
     }
+    return [listVideos, listPlaylists, listChannels];
   }
 
-  /// Retrieves a list of StreamInfoItem from the method channel response map
-  static List<StreamInfoItem> parseStreamListFromMap(info) {
-    List<StreamInfoItem> streams = [];
-    info.forEach((_, map) {
-      streams.add(StreamInfoItem(
-        map['url'],
-        map['id'],
-        map['name'],
-        map['uploaderName'],
-        map['uploaderUrl'],
-        map.containsKey('uploaderAvatars') ? List<String>.from(jsonDecode(map['uploaderAvatars'])) : [],
-        map['uploadDate'],
-        map['date'],
-        int.parse(map['duration']),
-        int.parse(map['viewCount'])
-      ));
-    });
-    return streams;
+  /// Retrieves a list of [StreamInfoItem] from the method channel response map.
+  static List<StreamInfoItem> parseStreamListFromMap(dynamic info) {
+    return Parse.list(
+      info,
+      (item) => StreamInfoItem(
+        item['url'],
+        item['id'],
+        item['name'],
+        item['uploaderName'],
+        item['uploaderUrl'],
+        Parse.imageList(item['uploaderAvatars']),
+        item['uploadDate'],
+        item['date'],
+        Parse.integer(item['duration']),
+        Parse.integer(item['viewCount']),
+      ),
+    );
   }
 
-  /// Retrieves a list of StreamSegment from Map
-  static List<StreamSegment> parseStreamSegmentListFromMap(info) {
-    List<StreamSegment> segments = <StreamSegment>[];
-    info.forEach((_, map) {
-      segments.add(StreamSegment(
-        map['url'],
-        map['title'],
-        map['previewUrl'],
-        int.parse(map['startTimeSeconds'])
-      ));
-    });
-    return segments;
+  /// Retrieves a list of [StreamSegment] from the method channel response map.
+  static List<StreamSegment> parseStreamSegmentListFromMap(dynamic info) {
+    return Parse.list(
+      info,
+      (item) => StreamSegment(
+        item['url'],
+        item['title'],
+        item['previewUrl'],
+        Parse.integer(item['startTimeSeconds']),
+      ),
+    );
   }
-
 }

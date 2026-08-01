@@ -1,49 +1,42 @@
-import 'dart:convert';
-
-import 'package:newpipeextractor_dart/exceptions/badUrlException.dart';
-import 'package:newpipeextractor_dart/models/infoItems/video.dart';
-import 'package:newpipeextractor_dart/models/playlist.dart';
 import 'package:newpipeextractor_dart/newpipeextractor_dart.dart';
-import 'package:newpipeextractor_dart/utils/reCaptcha.dart';
+import 'package:newpipeextractor_dart/utils/parsing.dart';
 import 'package:newpipeextractor_dart/utils/streamsParser.dart';
 import 'package:newpipeextractor_dart/utils/stringChecker.dart';
 
 class PlaylistExtractor {
-
-  /// Extract all the details of the given Playlist URL into a YoutubePlaylist object
+  /// Extract the details of the given playlist URL into a [YoutubePlaylist].
   static Future<YoutubePlaylist> getPlaylistDetails(String? playlistUrl) async {
-    if (playlistUrl == null || StringChecker.hasWhiteSpace(playlistUrl))
-      throw BadUrlException("Url is null or contains white space");
-    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
-      "getPlaylistDetails", { "playlistUrl": playlistUrl }
-    );
-    var info = await task();
-    // Check if we got reCaptcha needed response
-    info = await ReCaptchaPage.checkInfo(info, task);
+    if (playlistUrl == null || StringChecker.hasWhiteSpace(playlistUrl)) {
+      throw BadUrlException('Url is null or contains white space');
+    }
+    final info = await ReCaptchaPage.run(
+      () => NewPipeExtractorDart.extractorChannel
+          .invokeMethod('getPlaylistDetails', {'playlistUrl': playlistUrl}),
+    ) as Map;
+
     return YoutubePlaylist(
       info['id'],
       info['name'],
       info['url'],
       info['uploaderName'],
-      List<String>.from(jsonDecode(info['uploaderAvatars'])),
+      Parse.imageList(info['uploaderAvatars']),
       info['uploaderUrl'],
-      List<String>.from(jsonDecode(info['banners'])),
-      List<String>.from(jsonDecode(info['thumbnails'])),
-      int.parse(info['streamCount'])
+      Parse.imageList(info['banners']),
+      Parse.imageList(info['thumbnails']),
+      Parse.integer(info['streamCount']),
     );
   }
 
-  /// Extract all the Streams from the given Playlist URL
-  /// as a list of StreamInfoItem
-  static Future<List<StreamInfoItem>> getPlaylistStreams(String? playlistUrl) async {
-    if (playlistUrl == null || StringChecker.hasWhiteSpace(playlistUrl))
-      throw BadUrlException("Url is null or contains white space");
-    Future<dynamic> task() => NewPipeExtractorDart.extractorChannel.invokeMethod(
-      "getPlaylistStreams", { "playlistUrl": playlistUrl }
+  /// Extract the streams of the given playlist URL as [StreamInfoItem]s.
+  static Future<List<StreamInfoItem>> getPlaylistStreams(
+      String? playlistUrl) async {
+    if (playlistUrl == null || StringChecker.hasWhiteSpace(playlistUrl)) {
+      throw BadUrlException('Url is null or contains white space');
+    }
+    final info = await ReCaptchaPage.run(
+      () => NewPipeExtractorDart.extractorChannel
+          .invokeMethod('getPlaylistStreams', {'playlistUrl': playlistUrl}),
     );
-    var info = await task();
-    // Check if we got reCaptcha needed response
-    info = await ReCaptchaPage.checkInfo(info, task);
     return StreamsParser.parseStreamListFromMap(info);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:newpipeextractor_dart/models/infoItems/channel.dart';
 import 'package:newpipeextractor_dart/models/infoItems/video.dart';
+import 'package:newpipeextractor_dart/utils/parsing.dart';
 
 class VideoInfo {
   
@@ -64,30 +65,39 @@ class VideoInfo {
   /// Age limit (int)
   int? ageLimit;
 
-  /// Video Tags
+  /// Video tags, as a JSON array string (e.g. `["music","live"]`).
+  ///
+  /// The native side used to send Java's `List.toString()` here, which was not
+  /// machine-readable; it is now proper JSON.
   String? tags;
 
   /// Video Thumbnail Url
   List<String>? thumbnails;
 
-  /// Retrieve a new [VideoInfo] object from Map
+  /// Retrieve a new [VideoInfo] object from Map.
+  ///
+  /// The image fields arrive as JSON array *strings*; this used to call
+  /// `List<String>.from` on them directly, so every call threw. The numeric
+  /// fields used `int.parse`, which threw whenever the extractor could not
+  /// determine a value and sent null.
   static VideoInfo fromMap(Map<String, dynamic> map) {
     return VideoInfo(
-      id: map.containsKey('id') ? map['id'] : null,
-      url: map.containsKey('url') ? map['url'] : null,
-      name: map.containsKey('name') ? map['name'] : null,
-      uploaderName: map.containsKey('uploaderName') ? map['uploaderName'] : null,
-      uploaderAvatars: map.containsKey('uploaderAvatars') ? List<String>.from(map['uploaderAvatars']) : null,
-      uploaderUrl: map.containsKey('uploaderUrl') ? map['uploaderUrl'] : null,
-      uploadDate: map.containsKey('uploadDate') ? map['uploadDate'] : null,
-      description: map.containsKey('description') ? map['description']: null,
-      length: map.containsKey('length') ? int.parse(map['length']) : null,
-      viewCount: map.containsKey('viewCount') ? int.parse(map['viewCount']) : null,
-      likeCount: map.containsKey('likeCount') ? int.parse(map['likeCount']) : null,
-      dislikeCount: map.containsKey('dislikeCount') ? int.parse(map['dislikeCount']) : null,
-      category: map.containsKey('category') ? map['category'] : null,
-      ageLimit: map.containsKey('ageLimit') ? int.parse(map['ageLimit']) : null,
-      thumbnails: map.containsKey('thumbnails') ? List<String>.from(map['thumbnails']) : null,
+      id: map['id'],
+      url: map['url'],
+      name: map['name'],
+      uploaderName: map['uploaderName'],
+      uploaderAvatars: Parse.imageList(map['uploaderAvatars']),
+      uploaderUrl: map['uploaderUrl'],
+      uploadDate: map['uploadDate'],
+      description: map['description'],
+      length: Parse.nullableInteger(map['length']),
+      viewCount: Parse.nullableInteger(map['viewCount']),
+      likeCount: Parse.nullableInteger(map['likeCount']),
+      dislikeCount: Parse.nullableInteger(map['dislikeCount']),
+      category: map['category'],
+      ageLimit: Parse.nullableInteger(map['ageLimit']),
+      tags: map['tags'],
+      thumbnails: Parse.imageList(map['thumbnails']),
     );
   }
 

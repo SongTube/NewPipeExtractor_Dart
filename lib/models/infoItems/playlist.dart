@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:newpipeextractor_dart/extractors/playlist.dart';
 import 'package:newpipeextractor_dart/models/playlist.dart';
+import 'package:newpipeextractor_dart/utils/parsing.dart';
 
 class PlaylistInfoItem {
 
@@ -46,27 +47,26 @@ class PlaylistInfoItem {
   }
 
   /// Get an object of PlaylistInfoItem from map
+  ///
+  /// `jsonDecode` hands back `List<dynamic>`, so reading the thumbnails
+  /// straight into a `List<String>` used to throw a TypeError on every
+  /// round-trip.
   static PlaylistInfoItem fromMap(Map<dynamic, dynamic> map) {
     return PlaylistInfoItem(
       map['url'],
       map['name'],
       map['uploaderName'],
-      map['thumbnails'],
-      int.parse(map['streamCount'])
+      Parse.imageList(map['thumbnails']),
+      Parse.integer(map['streamCount']),
     );
   }
 
   /// Get a list of PlaylistInfoItem from a simple (valid) json String
   static List<PlaylistInfoItem> fromJsonString(String jsonString) {
-    Map<String, dynamic> decodedMap = jsonDecode(jsonString);
-    List<dynamic>? list = decodedMap['listPlaylist'];
-    List<PlaylistInfoItem> playlists = [];
+    final Map<String, dynamic> decodedMap = jsonDecode(jsonString);
+    final List<dynamic>? list = decodedMap['listPlaylist'];
     if (list == null) return [];
-    list.forEach((element) {
-      PlaylistInfoItem p = PlaylistInfoItem.fromMap(element);
-      playlists.add(p);
-    });
-    return playlists;
+    return [for (final element in list) PlaylistInfoItem.fromMap(element)];
   }
 
   /// Transform a list of PlaylistInfoItem into a simple json String
